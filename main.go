@@ -629,6 +629,7 @@ func runUniversalMotor(ctx context.Context, req DownloadRequest, formatSpec, out
 
 	cmdArgs := []string{
 		"--newline",
+		"--js-runtimes", "node",
 		"--progress-template", "download:[PROGRESS] %(progress.downloaded_bytes)s/%(progress.total_bytes_estimate)s | %(progress.speed)s | %(progress.eta)s | %(progress._percent_str)s | %(progress._speed_str)s | %(progress._eta_str)s",
 		"-f", fSpec,
 		"-o", outputTemplate,
@@ -976,7 +977,7 @@ func getVideoInfo(urlStr string) (map[string]interface{}, error) {
 		}
 	}
 
-	ytdlpArgs := []string{"-J", "--no-playlist", "--no-call-home", "--no-warnings", "--socket-timeout", "15"}
+	ytdlpArgs := []string{"-J", "--js-runtimes", "node", "--no-playlist", "--no-call-home", "--no-warnings", "--socket-timeout", "15"}
 	if _, errStat := os.Stat("/app/cookies.txt"); errStat == nil {
 		ytdlpArgs = append([]string{"--cookies", "/app/cookies.txt"}, ytdlpArgs...)
 	}
