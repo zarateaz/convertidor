@@ -9,6 +9,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
+      network: host
       
     # Política de reinicio: Reinicia automáticamente a menos que se detenga manualmente
     restart: unless-stopped
