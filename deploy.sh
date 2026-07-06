@@ -5,9 +5,9 @@
 # ==============================================================================
 
 # Configuración del servidor remoto VPS (Edita estos parámetros según corresponda)
-VPS_USER="zarate"
+VPS_USER="angel"
 VPS_HOST="187.127.20.171" # <-- Coloca aquí la IP o host de tu VPS
-VPS_PATH="/home/zarate/nexus-downloader"
+VPS_PATH="/home/angel/convertidor"
 IMAGE_NAME="nexus-downloader"
 TAG="latest"
 TAR_FILE="nexus-downloader.tar.gz"
@@ -83,7 +83,7 @@ ssh -T ${VPS_USER}@${VPS_HOST} << EOF
     echo "Limpiando imágenes de Docker huérfanas o sin etiqueta..."
     docker image prune -f
 EOF
-echo -e "${GREEN}✔ Contenedor desplegado y en ejecución silenciosa en el puerto 8000.${NC}"
+echo -e "${GREEN}✔ Contenedor desplegado y en ejecución silenciosa en el puerto 3006.${NC}"
 
 # ------------------------------------------------------------------------------
 # Paso 5: Limpieza local
@@ -92,4 +92,4 @@ echo -e "\n${CYAN}🧹 [Paso 5/5] Eliminando archivos locales temporales...${NC}
 rm -f "$TAR_FILE"
 echo -e "${GREEN}✔ Limpieza de espacio local completada.${NC}"
 
-echo -e "\n${GREEN}${BOLD}🎉 ¡Despliegue finalizado con éxito! El descargador está activo en http://${VPS_HOST}:8000/${NC}\n"
+echo -e "\n${GREEN}${BOLD}🎉 ¡Despliegue finalizado con éxito! El descargador está activo en http://${VPS_HOST}:3006/${NC}\n"

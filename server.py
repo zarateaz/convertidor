@@ -10,7 +10,7 @@ import random
 import concurrent.futures
 import yt_dlp
 
-PORT = 8000
+PORT = int(os.environ.get("PORT", 8000))
 
 # Rotating mobile and desktop User-Agents
 USER_AGENTS = [

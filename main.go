@@ -22,7 +22,7 @@ import (
 	"time"
 )
 
-const PORT = 8000
+var PORT = 8000
 
 // Mobile and desktop User-Agents for rotation
 var userAgents = []string{
@@ -1349,6 +1349,11 @@ func startGUI() {
 }
 
 func main() {
+	if portStr := os.Getenv("PORT"); portStr != "" {
+		if p, err := strconv.Atoi(portStr); err == nil {
+			PORT = p
+		}
+	}
 	// Register static handlers
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		path := r.URL.Path

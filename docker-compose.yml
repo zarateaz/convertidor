@@ -27,4 +27,4 @@ services:
       
     # Variables de entorno adicionales (opcionales)
     environment:
-      - PORT=8000
+      - PORT=3006
