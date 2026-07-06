@@ -23,3 +23,8 @@ venv/
 .venv/
 env/
 .env
+
+# Archivos de credenciales y configuración local
+cookies.txt
+daemon.json
+
