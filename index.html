@@ -42,6 +42,26 @@
             </div>
         </section>
 
+        <!-- CONFIGURATION / COOKIES -->
+        <section class="panel glass-panel cookies-panel">
+            <div class="settings-header" style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
+                <div style="display: flex; align-items: center; gap: 8px;">
+                    <svg class="icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a10 10 0 1 0 10 10c0-1.66-1.34-3-3-3h-1a3 3 0 0 1-3-3V5a3 3 0 0 1-3-3v0z"/><path d="M12 2v4a2 2 0 0 0 2 2h4"/><circle cx="7.5" cy="10.5" r=".5"/><circle cx="11.5" cy="13.5" r=".5"/><circle cx="16.5" cy="15.5" r=".5"/><circle cx="8.5" cy="16.5" r=".5"/></svg>
+                    <h2>COOKIES DE YOUTUBE (BYPASS ANTIBOT)</h2>
+                </div>
+                <button id="btnToggleCookies" class="cyber-btn secondary" style="font-size: 0.75rem; padding: 4px 8px; height: auto;">MOSTRAR / EDITAR</button>
+            </div>
+            <div id="cookiesContainer" style="display: none; margin-top: 15px; flex-direction: column; gap: 10px; width: 100%;">
+                <p style="font-size: 0.8rem; color: var(--neon-cyan); font-family: 'Share Tech Mono', monospace; line-height: 1.4; margin-bottom: 5px;">
+                    Pega aquí el contenido de tu extensión de cookies de YouTube en formato Netscape para evitar bloqueos.
+                </p>
+                <textarea id="cookiesTextarea" class="cyber-input" style="height: 150px; font-family: monospace; font-size: 0.8rem; resize: vertical; width: 100%; white-space: pre; overflow-x: auto;" placeholder="# Netscape HTTP Cookie File..."></textarea>
+                <button id="btnSaveCookies" class="cyber-btn primary" style="width: 100%;">GUARDAR COOKIES EN EL VPS</button>
+                <div id="cookiesStatus" style="font-size: 0.8rem; font-family: 'Share Tech Mono', monospace; text-align: center; margin-top: 5px; color: var(--neon-cyan);"></div>
+            </div>
+        </section>
+
+
         <!-- INPUT / SEARCH -->
         <section class="panel glass-panel search-panel">
             <div class="search-title">INGRESE ENLACE DE YOUTUBE</div>

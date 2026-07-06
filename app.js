@@ -97,6 +97,99 @@ document.addEventListener("DOMContentLoaded", () => {
             });
     });
 
+    // Cookies Management
+    const btnToggleCookies = document.getElementById("btnToggleCookies");
+    const cookiesContainer = document.getElementById("cookiesContainer");
+    const cookiesTextarea = document.getElementById("cookiesTextarea");
+    const btnSaveCookies = document.getElementById("btnSaveCookies");
+    const cookiesStatus = document.getElementById("cookiesStatus");
+
+    btnToggleCookies.addEventListener("click", () => {
+        if (cookiesContainer.style.display === "none") {
+            cookiesContainer.style.display = "flex";
+            btnToggleCookies.textContent = "OCULTAR PANEL";
+            loadCookiesStatus();
+        } else {
+            cookiesContainer.style.display = "none";
+            updateCookiesButtonStatus();
+        }
+    });
+
+    async function loadCookiesStatus() {
+        try {
+            cookiesStatus.textContent = "Consultando VPS...";
+            const res = await fetch("/api/cookies");
+            const data = await res.json();
+            if (data.exists) {
+                cookiesStatus.textContent = `Estado: ACTIVO (${data.youtube_cookies} de YouTube, ${data.total_cookies} en total)`;
+                cookiesStatus.style.color = "var(--neon-cyan)";
+            } else {
+                cookiesStatus.textContent = "Estado: NO DETECTADO (Bypass inactivo)";
+                cookiesStatus.style.color = "#ff4444";
+            }
+        } catch (err) {
+            cookiesStatus.textContent = "Error al consultar estado de cookies.";
+            cookiesStatus.style.color = "#ff4444";
+        }
+    }
+
+    function updateCookiesButtonStatus() {
+        fetch("/api/cookies")
+            .then(res => res.json())
+            .then(data => {
+                if (data.exists) {
+                    btnToggleCookies.textContent = `EDITAR COOKIES (${data.youtube_cookies})`;
+                } else {
+                    btnToggleCookies.textContent = "CONFIGURAR COOKIES";
+                }
+            })
+            .catch(() => {});
+    }
+
+    btnSaveCookies.addEventListener("click", async () => {
+        const text = cookiesTextarea.value.trim();
+        if (!text) {
+            alert("Por favor, ingresa el texto de las cookies.");
+            return;
+        }
+
+        btnSaveCookies.disabled = true;
+        btnSaveCookies.textContent = "GUARDANDO EN VPS...";
+        cookiesStatus.textContent = "Escribiendo archivo de forma segura...";
+        cookiesStatus.style.color = "var(--neon-cyan)";
+
+        try {
+            const response = await fetch("/api/cookies", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ cookies: text })
+            });
+            const data = await response.json();
+            if (data.success) {
+                cookiesStatus.textContent = "¡Cookies guardadas y activadas con éxito!";
+                cookiesStatus.style.color = "#39ff14";
+                cookiesTextarea.value = "";
+                setTimeout(() => {
+                    cookiesContainer.style.display = "none";
+                    updateCookiesButtonStatus();
+                }, 1500);
+            } else {
+                cookiesStatus.textContent = "Error: " + (data.error || "No se pudo guardar.");
+                cookiesStatus.style.color = "#ff4444";
+            }
+        } catch (err) {
+            cookiesStatus.textContent = "Error de conexión al guardar cookies.";
+            cookiesStatus.style.color = "#ff4444";
+        } finally {
+            btnSaveCookies.disabled = false;
+            btnSaveCookies.textContent = "GUARDAR COOKIES EN EL VPS";
+        }
+    });
+
+    // Initial check
+    updateCookiesButtonStatus();
+
+
     // Toggle between tabs (Video vs Audio)
     tabVideo.addEventListener("click", () => {
         selectedType = "video";

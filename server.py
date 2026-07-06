@@ -694,6 +694,8 @@ class FuturisticAPIHandler(http.server.BaseHTTPRequestHandler):
             self.handle_progress_stream()
         elif path == "/api/config":
             self.handle_config()
+        elif path == "/api/cookies":
+            self.handle_get_cookies()
         else:
             self.send_error(404, "File Not Found")
             
@@ -715,6 +717,8 @@ class FuturisticAPIHandler(http.server.BaseHTTPRequestHandler):
             self.handle_download(params)
         elif path == "/api/cancel":
             self.handle_cancel()
+        elif path == "/api/cookies":
+            self.handle_save_cookies(params)
         else:
             self.send_error(404, "API Endpoint Not Found")
             
@@ -739,6 +743,50 @@ class FuturisticAPIHandler(http.server.BaseHTTPRequestHandler):
         
     def handle_config(self):
         self.send_json({"default_path": get_default_save_path()})
+        
+    def handle_get_cookies(self):
+        if os.path.exists(COOKIES_FILE):
+            try:
+                with open(COOKIES_FILE, "r", encoding="utf-8") as f:
+                    content = f.read()
+                lines = [l for l in content.split("\n") if l.strip() and not l.startswith("#")]
+                youtube_cookies = [l for l in lines if "youtube.com" in l]
+                self.send_json({
+                    "exists": True,
+                    "total_cookies": len(lines),
+                    "youtube_cookies": len(youtube_cookies),
+                    "message": f"Archivo detectado con {len(lines)} cookies ({len(youtube_cookies)} de YouTube)."
+                })
+            except Exception as e:
+                self.send_json({"exists": True, "error": str(e)})
+        else:
+            self.send_json({
+                "exists": False,
+                "message": "No hay archivo de cookies configurado actualmente."
+            })
+            
+    def handle_save_cookies(self, params):
+        cookies_text = params.get("cookies", "").strip()
+        if not cookies_text:
+            self.send_json({"success": False, "error": "El contenido de las cookies no puede estar vacío."}, 400)
+            return
+        
+        if "# Netscape" not in cookies_text and ".youtube.com" not in cookies_text:
+            self.send_json({"success": False, "error": "Formato de cookies inválido. Debe ser formato Netscape (incluyendo dominios)."}, 400)
+            return
+            
+        try:
+            with open(COOKIES_FILE, "w", encoding="utf-8") as f:
+                f.write(cookies_text + "\n")
+            
+            try:
+                os.chmod(COOKIES_FILE, 0o666)
+            except Exception:
+                pass
+                
+            self.send_json({"success": True, "message": "Cookies guardadas exitosamente en el VPS."})
+        except Exception as e:
+            self.send_json({"success": False, "error": f"Error al escribir el archivo: {str(e)}"}, 500)
         
     def handle_info(self, params):
         url = params.get("url")

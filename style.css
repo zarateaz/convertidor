@@ -212,6 +212,16 @@ body {
     gap: 1.5rem;
 }
 
+/* Cookies panel */
+.cookies-panel {
+    padding: 1rem 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    margin-top: 1rem;
+}
+
+
 .settings-header {
     display: flex;
     align-items: center;
