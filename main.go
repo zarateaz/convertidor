@@ -981,9 +981,7 @@ func getVideoInfo(urlStr string) (map[string]interface{}, error) {
 	if _, errStat := os.Stat("/app/cookies.txt"); errStat == nil {
 		ytdlpArgs = append([]string{"--cookies", "/app/cookies.txt"}, ytdlpArgs...)
 	}
-	if isYouTubeURL {
-		ytdlpArgs = append(ytdlpArgs, "--extractor-args", "youtube:skip=dash,hls")
-	}
+
 	ytdlpArgs = append(ytdlpArgs, urlStr)
 	out, err = runCommand("yt-dlp", ytdlpArgs...)
 	if err != nil {

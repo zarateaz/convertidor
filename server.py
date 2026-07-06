@@ -565,8 +565,6 @@ def get_video_info(url):
                 'quiet': True,
                 'no_warnings': True,
             }
-            if is_youtube:
-                ydl_opts['extractor_args'] = {'youtube': ['skip=dash,hls']}
             apply_cookies_opt(ydl_opts)
                 
             with yt_dlp.YoutubeDL(ydl_opts) as ydl:
