@@ -629,6 +629,10 @@ func runUniversalMotor(ctx context.Context, req DownloadRequest, formatSpec, out
 		"-o", outputTemplate,
 	}
 
+	if _, err := os.Stat("/app/cookies.txt"); err == nil {
+		cmdArgs = append([]string{"--cookies", "/app/cookies.txt"}, cmdArgs...)
+	}
+
 	if req.Type == "audio" {
 		cmdArgs = append(cmdArgs, "-x", "--audio-format", "mp3", "--audio-quality", "320k")
 	} else {
@@ -906,7 +910,12 @@ func getVideoInfo(urlStr string) (map[string]interface{}, error) {
 	var err error
 
 	if isPlaylistLink {
-		out, err = runCommand("yt-dlp", "--flat-playlist", "-J", "--no-call-home", "--no-warnings", "--socket-timeout", "15", urlStr)
+		args := []string{"--flat-playlist", "-J", "--no-call-home", "--no-warnings", "--socket-timeout", "15"}
+		if _, errStat := os.Stat("/app/cookies.txt"); errStat == nil {
+			args = append([]string{"--cookies", "/app/cookies.txt"}, args...)
+		}
+		args = append(args, urlStr)
+		out, err = runCommand("yt-dlp", args...)
 		if err == nil {
 			var data map[string]interface{}
 			if err := json.Unmarshal(out, &data); err == nil {
@@ -964,6 +973,9 @@ func getVideoInfo(urlStr string) (map[string]interface{}, error) {
 
 	isYouTubeURL := strings.Contains(urlStr, "youtube.com") || strings.Contains(urlStr, "youtu.be")
 	ytdlpArgs := []string{"-J", "--no-playlist", "--no-call-home", "--no-warnings", "--socket-timeout", "15"}
+	if _, errStat := os.Stat("/app/cookies.txt"); errStat == nil {
+		ytdlpArgs = append([]string{"--cookies", "/app/cookies.txt"}, ytdlpArgs...)
+	}
 	if isYouTubeURL {
 		ytdlpArgs = append(ytdlpArgs, "--extractor-args", "youtube:skip=dash,hls")
 	}

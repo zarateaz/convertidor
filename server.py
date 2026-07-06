@@ -12,6 +12,15 @@ import yt_dlp
 
 PORT = int(os.environ.get("PORT", 8000))
 
+COOKIES_FILE = "/app/cookies.txt"
+
+def apply_cookies_opt(ydl_opts):
+    if os.path.exists(COOKIES_FILE):
+        print(f"[NEXUS] Archivo de cookies detectado en: {COOKIES_FILE}. Cargando para yt-dlp.")
+        ydl_opts['cookiefile'] = COOKIES_FILE
+    else:
+        print(f"[NEXUS] AVISO: No se detectó archivo de cookies en {COOKIES_FILE}. Continuando sin cookies.")
+
 # Rotating mobile and desktop User-Agents
 USER_AGENTS = [
     "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
@@ -387,6 +396,7 @@ def run_ytdl_motor(url, format_spec, output_template, post_args, save_path, down
         'quiet': True,
         'no_warnings': True,
     }
+    apply_cookies_opt(ydl_opts)
     
     if download_type == "audio":
         # Extract best audio and convert to 320kbps MP3
@@ -515,6 +525,7 @@ def get_video_info(url):
                 'quiet': True,
                 'no_warnings': True,
             }
+            apply_cookies_opt(ydl_opts)
             with yt_dlp.YoutubeDL(ydl_opts) as ydl:
                 data = ydl.extract_info(url, download=False)
                 
@@ -553,6 +564,7 @@ def get_video_info(url):
             }
             if is_youtube:
                 ydl_opts['extractor_args'] = {'youtube': ['skip=dash,hls']}
+            apply_cookies_opt(ydl_opts)
                 
             with yt_dlp.YoutubeDL(ydl_opts) as ydl:
                 data = ydl.extract_info(url, download=False)

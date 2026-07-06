@@ -25,6 +25,7 @@ services:
     # los permisos del disco duro del host si coinciden los UIDs.
     volumes:
       - ./downloads:/app/downloads
+      - ./cookies.txt:/app/cookies.txt:ro
       
     # Variables de entorno adicionales (opcionales)
     environment:

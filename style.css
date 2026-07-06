@@ -344,7 +344,11 @@ body {
     font-family: 'Share Tech Mono', monospace;
     margin-top: 0.25rem;
     min-height: 1.2rem;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    white-space: normal;
 }
+
 
 /* Grid layout for contents */
 .grid-layout {
@@ -800,4 +804,98 @@ body {
     margin-top: 4px;
     font-family: 'Share Tech Mono', monospace;
     text-shadow: 0 0 5px rgba(0, 242, 254, 0.2);
+}
+
+/* ==========================================================================
+   RESPONSIVE DESIGN LAYOUT OVERRIDES (Mobile-First Optimization)
+   ========================================================================== */
+
+@media (max-width: 768px) {
+    .container {
+        padding: 1.5rem 1rem;
+        gap: 1rem;
+    }
+
+    .app-header {
+        padding-bottom: 0.75rem;
+    }
+
+    .logo-text {
+        font-size: 2rem;
+        letter-spacing: 3px;
+    }
+
+    .logo-accent {
+        font-size: 1.6rem;
+    }
+
+    .subtitle {
+        font-size: 0.7rem;
+        letter-spacing: 2px;
+    }
+
+    .settings-panel {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 1rem;
+        padding: 1.25rem 1rem;
+    }
+
+    .path-input-group {
+        flex-direction: column;
+        align-items: stretch;
+        max-width: 100%;
+        width: 100%;
+    }
+
+    .path-input-group input {
+        width: 100%;
+    }
+
+    .search-panel {
+        padding: 1.25rem;
+    }
+
+    .search-input-wrapper {
+        flex-direction: column;
+        gap: 0.75rem;
+    }
+
+    .cyber-btn {
+        width: 100%;
+        padding: 0.9rem 1.5rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .status-metrics {
+        flex-direction: column;
+        gap: 0.75rem;
+        padding: 0.75rem 0;
+    }
+
+    .metric {
+        align-items: center;
+        text-align: center;
+    }
+
+    .tab-content {
+        padding: 1rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .format-grid {
+        grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
+        gap: 0.5rem;
+    }
+
+    .format-card {
+        padding: 0.75rem 0.5rem;
+    }
+
+    .format-res {
+        font-size: 1rem;
+    }
 }

@@ -67,6 +67,8 @@ ssh -T ${VPS_USER}@${VPS_HOST} << EOF
     
     # 1. Crear el directorio de descargas con los permisos adecuados
     mkdir -p downloads
+    # Asegurar que exista un archivo cookies.txt en el host para evitar que Docker cree un directorio
+    touch cookies.txt
     
     echo "Cargando imagen Docker comprimida en el daemon..."
     docker load -i ${TAR_FILE}
