@@ -976,7 +976,6 @@ func getVideoInfo(urlStr string) (map[string]interface{}, error) {
 		}
 	}
 
-	isYouTubeURL := strings.Contains(urlStr, "youtube.com") || strings.Contains(urlStr, "youtu.be")
 	ytdlpArgs := []string{"-J", "--no-playlist", "--no-call-home", "--no-warnings", "--socket-timeout", "15"}
 	if _, errStat := os.Stat("/app/cookies.txt"); errStat == nil {
 		ytdlpArgs = append([]string{"--cookies", "/app/cookies.txt"}, ytdlpArgs...)
