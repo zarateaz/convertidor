@@ -1108,39 +1108,41 @@ func getVideoInfo(urlStr string) (map[string]interface{}, error) {
 		}
 	}
 
-	var heights []int
-	for h := range videoMap {
-		heights = append(heights, h)
+	qualityTiers := []struct {
+		height int
+		label  string
+	}{
+		{4320, "8K Ultra HD"},
+		{2160, "4K Ultra HD"},
+		{1440, "2K Quad HD"},
+		{1080, "Full HD"},
+		{720, "HD"},
+		{480, "480p"},
+		{360, "360p"},
+		{240, "240p"},
 	}
-	sort.Sort(sort.Reverse(sort.IntSlice(heights)))
 
 	var videoOptions []map[string]interface{}
-	for _, h := range heights {
-		v := videoMap[h]
+	for _, tier := range qualityTiers {
+		h := tier.height
+		v, exists := videoMap[h]
+		if !exists {
+			continue
+		}
 		sizeMB := 0.0
 		if v.Size > 0 {
 			sizeMB = math.Round((v.Size/(1024*1024))*10) / 10
 		}
 
-		label := fmt.Sprintf("%dp", h)
-		switch h {
-		case 4320:
-			label += " (8K Ultra HD)"
-		case 2160:
-			label += " (4K Ultra HD)"
-		case 1440:
-			label += " (2K Quad HD)"
-		case 1080:
-			label += " (Full HD)"
-		case 720:
-			label += " (HD)"
-		}
+		label := fmt.Sprintf("%dp (%s)", h, tier.label)
+		// Use safe selector instead of raw format ID to avoid format unavailability errors
+		formatSpec := fmt.Sprintf("bestvideo[height=%d]+bestaudio/bestvideo[height<=%d]+bestaudio/best[height<=%d]/best", h, h, h)
 
 		videoOptions = append(videoOptions, map[string]interface{}{
-			"format_id": v.FormatID,
+			"format_id": formatSpec,
 			"height":    h,
 			"label":     label,
-			"ext":       v.Ext,
+			"ext":       "mp4",
 			"fps":       int(v.FPS),
 			"size_mb":   sizeMB,
 		})
@@ -1148,9 +1150,9 @@ func getVideoInfo(urlStr string) (map[string]interface{}, error) {
 
 	if len(videoOptions) == 0 {
 		videoOptions = append(videoOptions, map[string]interface{}{
-			"format_id": "best",
+			"format_id": "bestvideo+bestaudio/best",
 			"height":    0,
-			"label":     "Calidad única / Directo",
+			"label":     "Mejor calidad disponible",
 			"ext":       "mp4",
 			"fps":       30,
 			"size_mb":   0,
