@@ -1,0 +1,9 @@
+{
+  "bridge": "none",
+  "iptables": false,
+  "storage-driver": "vfs",
+  "dns": [
+    "1.1.1.1",
+    "8.8.8.8"
+  ]
+}
