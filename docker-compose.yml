@@ -1,0 +1,30 @@
+version: '3.8'
+
+services:
+  nexus-downloader:
+    # Nombre del contenedor en ejecución
+    container_name: nexus-downloader-service
+    
+    # Construir utilizando el Dockerfile en el directorio actual
+    build:
+      context: .
+      dockerfile: Dockerfile
+      
+    # Política de reinicio: Reinicia automáticamente a menos que se detenga manualmente
+    restart: unless-stopped
+    
+    # Modo de red host nativo: Mapea directamente a la red física del VPS.
+    # - Ventaja crítica: Elimina la sobrecarga de NAT de iptables en Docker,
+    #   habilitando descargas a máxima capacidad de la interfaz de red del VPS (1Gbps+).
+    network_mode: "host"
+    
+    # Mapeo de volumen de persistencia para las descargas.
+    # El directorio local './downloads' del VPS se mapeará a '/app/downloads' dentro del contenedor.
+    # Como el contenedor corre bajo el usuario 'zarate' (UID 1000), este mapeo mantiene intactos 
+    # los permisos del disco duro del host si coinciden los UIDs.
+    volumes:
+      - ./downloads:/app/downloads
+      
+    # Variables de entorno adicionales (opcionales)
+    environment:
+      - PORT=8000

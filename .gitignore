@@ -1,0 +1,25 @@
+# Archivos compilados e imágenes de Docker
+nexus-downloader
+nexus-downloader.tar.gz
+*.tar.gz
+*.tar
+
+# Caché de Python
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Directorio de perfiles y caché
+.chrome-profile/
+.idea/
+.vscode/
+
+# Descargas locales y base de datos/sesiones locales
+downloads/
+Downloads/
+
+# Entornos virtuales
+venv/
+.venv/
+env/
+.env

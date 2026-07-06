@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NEXUS - Descargador de Medios del Futuro</title>
+    <!-- Google Fonts for Futuristic Look -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;800;900&family=Rajdhani:wght@500;600;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="cyber-grid"></div>
+    <div class="glow-orb purple-orb"></div>
+    <div class="glow-orb cyan-orb"></div>
+
+    <div class="container">
+        <!-- HEADER -->
+        <header class="app-header">
+            <div class="logo-container">
+                <span class="logo-accent">&lt;</span>
+                <h1 class="logo-text">NEXUS</h1>
+                <span class="logo-accent">/&gt;</span>
+            </div>
+            <p class="subtitle">SISTEMA CIBERNÉTICO DE EXTRACCIÓN DE AUDIO Y VIDEO</p>
+            <div class="system-status">
+                <span class="status-indicator online"></span>
+                <span class="status-text">CONEXIÓN LOCAL ESTABLE</span>
+            </div>
+        </header>
+
+        <!-- CONFIGURATION / SAVE PATH -->
+        <section class="panel glass-panel settings-panel">
+            <div class="settings-header">
+                <svg class="icon" viewBox="0 0 24 24" width="18" height="18"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41M12 7a5 5 0 1 0 0 10 5 5 0 0 0 0-10z"/></svg>
+                <h2>DIRECTORIO DE GUARDADO</h2>
+            </div>
+            <div class="path-input-group">
+                <input type="text" id="savePath" class="cyber-input" value="" placeholder="Cargando ruta de descargas...">
+                <button id="btnRestorePath" class="cyber-btn secondary" title="Restaurar por defecto">DEFECTO</button>
+            </div>
+        </section>
+
+        <!-- INPUT / SEARCH -->
+        <section class="panel glass-panel search-panel">
+            <div class="search-title">INGRESE ENLACE DE YOUTUBE</div>
+            <div class="search-input-wrapper">
+                <input type="text" id="youtubeUrl" class="cyber-input" placeholder="https://www.youtube.com/watch?v=..." autocomplete="off">
+                <button id="btnScan" class="cyber-btn primary">
+                    <span class="btn-text">ESCANEAR</span>
+                    <span class="btn-scanner"></span>
+                </button>
+            </div>
+            <div class="error-msg" id="scanError"></div>
+        </section>
+
+        <!-- MAIN LAYOUT (HIDDEN UNTIL LOADED) -->
+        <main class="main-content" id="mediaDetailsPanel" style="display: none;">
+            <div class="grid-layout">
+                
+                <!-- VIDEO METADATA CARD (LEFT) -->
+                <div class="panel glass-panel media-card">
+                    <div class="card-border-line"></div>
+                    <div class="thumbnail-wrapper">
+                        <img id="videoThumbnail" src="" alt="Miniatura del Video">
+                        <div class="video-duration" id="videoDuration">00:00</div>
+                    </div>
+                    <div class="meta-content">
+                        <div class="playlist-badge" id="playlistBadge" style="display: none;">MODO MIX / PLAYLIST</div>
+                        <h3 id="videoTitle">Título del Video</h3>
+                        <p class="channel-name" id="videoUploader">Canal</p>
+                        <p class="folder-notice" id="folderNotice" style="display: none; font-size: 0.75rem; color: var(--neon-cyan); margin-top: 4px; font-family: 'Share Tech Mono', monospace;"></p>
+                        <div class="card-footer-decor">
+                            <span>SYS_EXTRACTOR_V2.0</span>
+                            <span class="decor-dots">...</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- SELECTORS (RIGHT) -->
+                <div class="selectors-container">
+                    <!-- DOWNLOAD SELECTOR OPTIONS -->
+                    <div class="panel glass-panel selector-panel">
+                        <div class="selector-header">
+                            <button class="selector-tab active" id="tabVideo">
+                                <svg class="tab-icon" viewBox="0 0 24 24" width="16" height="16"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M23 7a2 2 0 0 0-2.45-1.45L16 7V5a2 2 0 0 0-2-2H2a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2l4.55 1.45A2 2 0 0 0 23 17V7z"/></svg>
+                                DESCARGAR VIDEO
+                            </button>
+                            <button class="selector-tab" id="tabAudio">
+                                <svg class="tab-icon" viewBox="0 0 24 24" width="16" height="16"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M9 18V5l12-2v13M9 10H5a2 2 0 0 0-2 2v4a2 2 0 0 0 2 2h4v-8zm12-2h-4a2 2 0 0 0-2 2v4a2 2 0 0 0 2 2h4V8z"/></svg>
+                                DESCARGAR AUDIO
+                            </button>
+                        </div>
+
+                        <!-- VIDEO FORMATS GRID -->
+                        <div class="tab-content" id="videoContent">
+                            <div class="format-grid" id="videoFormatGrid">
+                                <!-- Options will be dynamically populated -->
+                            </div>
+                        </div>
+
+                        <!-- AUDIO FORMATS GRID -->
+                        <div class="tab-content" id="audioContent" style="display: none;">
+                            <div class="format-grid" id="audioFormatGrid">
+                                <!-- MP3 options & native -->
+                                <div class="format-card" data-format="best_audio_native" data-type="audio">
+                                    <div class="format-res">ORIGINAL</div>
+                                    <div class="format-ext">M4A/OPUS</div>
+                                    <div class="format-size">Sin compresión</div>
+                                    <div class="format-quality">Mejor calidad nativa</div>
+                                </div>
+                                <div class="format-card active" data-format="mp3_320" data-type="audio">
+                                    <div class="format-res">MP3 320k</div>
+                                    <div class="format-ext">MP3</div>
+                                    <div class="format-size">~10-15 MB</div>
+                                    <div class="format-quality">Ultra Calidad</div>
+                                </div>
+                                <div class="format-card" data-format="mp3_256" data-type="audio">
+                                    <div class="format-res">MP3 256k</div>
+                                    <div class="format-ext">MP3</div>
+                                    <div class="format-size">~8-12 MB</div>
+                                    <div class="format-quality">Calidad Alta</div>
+                                </div>
+                                <div class="format-card" data-format="mp3_128" data-type="audio">
+                                    <div class="format-res">MP3 128k</div>
+                                    <div class="format-ext">MP3</div>
+                                    <div class="format-size">~4-6 MB</div>
+                                    <div class="format-quality">Calidad Media</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="download-action-wrapper">
+                            <button id="btnDownload" class="cyber-btn primary pulse">
+                                INICIAR TRANSMISIÓN Y DESCARGA
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </main>
+
+        <!-- DOWNLOAD PROGRESS STATUS PANEL -->
+        <section class="panel glass-panel progress-panel" id="progressPanel" style="display: none;">
+            <div class="progress-details-header">
+                <div class="task-title">
+                    <span class="blinking-dot"></span>
+                    <span id="downloadingTitle">Procesando descarga...</span>
+                </div>
+                <button id="btnCancel" class="cyber-btn cancel">ABORTAR</button>
+            </div>
+
+            <!-- Progress readouts -->
+            <div class="status-metrics">
+                <div class="metric">
+                    <span class="metric-label">PROGRESO:</span>
+                    <span class="metric-value font-mono" id="progressPercent">0%</span>
+                </div>
+                <div class="metric">
+                    <span class="metric-label">VELOCIDAD:</span>
+                    <span class="metric-value font-mono" id="progressSpeed">0 B/s</span>
+                </div>
+                <div class="metric">
+                    <span class="metric-label">TIEMPO RESTANTE (ETA):</span>
+                    <span class="metric-value font-mono" id="progressEta">--:--</span>
+                </div>
+            </div>
+
+            <!-- Glowing Progress Bar -->
+            <div class="progress-bar-container">
+                <div class="progress-bar-fill" id="progressBarFill" style="width: 0%;">
+                    <div class="progress-bar-glow"></div>
+                </div>
+                <div class="progress-bar-grid"></div>
+            </div>
+
+            <!-- Terminal log panel -->
+            <div class="terminal-container">
+                <div class="terminal-header">
+                    <div class="terminal-buttons">
+                        <span></span><span></span><span></span>
+                    </div>
+                    <div class="terminal-title">REGISTRO DE OPERACIÓN (yt-dlp)</div>
+                </div>
+                <div class="terminal-body" id="terminalLog">
+                    <!-- Logs will scroll here -->
+                </div>
+            </div>
+        </section>
+    </div>
+    <script src="app.js"></script>
+</body>
+</html>
