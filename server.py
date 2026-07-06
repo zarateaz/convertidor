@@ -624,42 +624,49 @@ def get_video_info(url):
                             "bitrate": bitrate
                         }
                         
+            # Build quality tiers from available heights
+            # Use safe yt-dlp selectors instead of raw format IDs to avoid
+            # "Requested format is not available" errors across different videos
+            QUALITY_TIERS = [
+                (4320, "8K Ultra HD"),
+                (2160, "4K Ultra HD"),
+                (1440, "2K Quad HD"),
+                (1080, "Full HD"),
+                (720, "HD"),
+                (480, "480p"),
+                (360, "360p"),
+                (240, "240p"),
+            ]
+
+            available_heights = set(video_map.keys())
             video_options = []
-            for h in sorted(video_map.keys(), reverse=True):
-                v = video_map[h]
-                size_mb = round(v["size"] / (1024 * 1024), 1) if v["size"] else 0
-                
-                label = f"{h}p"
-                if h == 4320:
-                    label += " (8K Ultra HD)"
-                elif h == 2160:
-                    label += " (4K Ultra HD)"
-                elif h == 1440:
-                    label += " (2K Quad HD)"
-                elif h == 1080:
-                    label += " (Full HD)"
-                elif h == 720:
-                    label += " (HD)"
-                    
-                video_options.append({
-                    "format_id": v["format_id"],
-                    "height": h,
-                    "label": label,
-                    "ext": v["ext"],
-                    "fps": int(v["fps"]),
-                    "size_mb": size_mb
-                })
-                
+
+            for h, quality_label in QUALITY_TIERS:
+                if h in available_heights:
+                    v = video_map[h]
+                    size_mb = round(v["size"] / (1024 * 1024), 1) if v["size"] else 0
+                    label = f"{h}p ({quality_label})" if quality_label not in f"{h}p" else f"{h}p ({quality_label})"
+                    # Use safe selector instead of raw format ID
+                    format_spec = f"bestvideo[height={h}]+bestaudio/bestvideo[height<={h}]+bestaudio/best[height<={h}]/best"
+                    video_options.append({
+                        "format_id": format_spec,
+                        "height": h,
+                        "label": f"{h}p ({quality_label})",
+                        "ext": "mp4",
+                        "fps": int(v["fps"]),
+                        "size_mb": size_mb
+                    })
+
             if not video_options:
                 video_options.append({
-                    "format_id": "best",
+                    "format_id": "bestvideo+bestaudio/best",
                     "height": 0,
-                    "label": "Calidad única / Directo",
+                    "label": "Mejor calidad disponible",
                     "ext": "mp4",
                     "fps": 30,
                     "size_mb": 0
                 })
-                
+
             return {
                 "success": True,
                 "is_playlist": False,
