@@ -982,7 +982,7 @@ func getVideoInfo(urlStr string) (map[string]interface{}, error) {
 		"--no-playlist",
 		"--no-call-home",
 		"--no-warnings",
-		"--no-check-formats",
+		"--extractor-args", "youtube:player_client=android,web",
 		"--socket-timeout", "15",
 	}
 	if _, errStat := os.Stat("/app/cookies.txt"); errStat == nil {
