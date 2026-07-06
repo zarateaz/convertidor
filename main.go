@@ -622,10 +622,17 @@ func runUniversalMotor(ctx context.Context, req DownloadRequest, formatSpec, out
 	session.status = "Downloading"
 	session.mu.Unlock()
 
+	fSpec := formatSpec
+	if !strings.Contains(fSpec, "+") && fSpec != "best" {
+		if _, err := strconv.Atoi(fSpec); err == nil {
+			fSpec = fSpec + "+bestaudio/best"
+		}
+	}
+
 	cmdArgs := []string{
 		"--newline",
 		"--progress-template", "download:[PROGRESS] %(progress.downloaded_bytes)s/%(progress.total_bytes_estimate)s | %(progress.speed)s | %(progress.eta)s | %(progress._percent_str)s | %(progress._speed_str)s | %(progress._eta_str)s",
-		"-f", formatSpec,
+		"-f", fSpec,
 		"-o", outputTemplate,
 	}
 
