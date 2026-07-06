@@ -15,7 +15,7 @@ PORT = int(os.environ.get("PORT", 8000))
 COOKIES_FILE = "/app/cookies.txt"
 
 def apply_cookies_opt(ydl_opts):
-    ydl_opts['js_runtimes'] = 'node'
+    ydl_opts['js_runtimes'] = {'node': {}}
     if os.path.exists(COOKIES_FILE):
         print(f"[NEXUS] Archivo de cookies detectado en: {COOKIES_FILE}. Cargando para yt-dlp.")
         ydl_opts['cookiefile'] = COOKIES_FILE
