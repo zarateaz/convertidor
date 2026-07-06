@@ -562,8 +562,9 @@ def get_video_info(url):
             is_youtube = "youtube.com" in url or "youtu.be" in url
             ydl_opts = {
                 'skip_download': True,
-                'quiet': True,
-                'no_warnings': True,
+                'quiet': False,
+                'no_warnings': False,
+                'verbose': True,
             }
             apply_cookies_opt(ydl_opts)
                 
