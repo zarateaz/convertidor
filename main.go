@@ -977,7 +977,14 @@ func getVideoInfo(urlStr string) (map[string]interface{}, error) {
 		}
 	}
 
-	ytdlpArgs := []string{"-J", "--js-runtimes", "node", "--no-playlist", "--no-call-home", "--no-warnings", "--socket-timeout", "15"}
+	ytdlpArgs := []string{
+		"-J",
+		"--no-playlist",
+		"--no-call-home",
+		"--no-warnings",
+		"--no-check-formats",
+		"--socket-timeout", "15",
+	}
 	if _, errStat := os.Stat("/app/cookies.txt"); errStat == nil {
 		ytdlpArgs = append([]string{"--cookies", "/app/cookies.txt"}, ytdlpArgs...)
 	}
