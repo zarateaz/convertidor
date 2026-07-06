@@ -407,7 +407,7 @@ def run_ytdl_motor(url, format_spec, output_template, post_args, save_path, down
             'preferredquality': '320',
         }]
     else:
-        if format_spec and format_spec.isdigit():
+        if format_spec and "+" not in format_spec and "best" not in format_spec and "audio" not in format_spec and "direct" not in format_spec:
             ydl_opts['format'] = f"{format_spec}+bestaudio/best"
         else:
             ydl_opts['format'] = format_spec

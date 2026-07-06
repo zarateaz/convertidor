@@ -623,10 +623,8 @@ func runUniversalMotor(ctx context.Context, req DownloadRequest, formatSpec, out
 	session.mu.Unlock()
 
 	fSpec := formatSpec
-	if !strings.Contains(fSpec, "+") && fSpec != "best" {
-		if _, err := strconv.Atoi(fSpec); err == nil {
-			fSpec = fSpec + "+bestaudio/best"
-		}
+	if fSpec != "" && !strings.Contains(fSpec, "+") && !strings.Contains(fSpec, "best") && !strings.Contains(fSpec, "audio") && !strings.Contains(fSpec, "direct") {
+		fSpec = fSpec + "+bestaudio/best"
 	}
 
 	cmdArgs := []string{
