@@ -413,7 +413,6 @@ def run_ytdl_motor(url, format_spec, output_template, post_args, save_path, down
         'external_downloader_args': {'aria2c': ['-j', '16', '-x', '16', '-s', '16', '-k', '1M']},
     }
     apply_cookies_opt(ydl_opts)
-    apply_ipv6_opt(ydl_opts, url)
     
     if download_type == "audio":
         # Extract best audio and convert to 320kbps MP3 with full metadata & cover art!
