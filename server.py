@@ -408,7 +408,7 @@ def run_ytdl_motor(url, format_spec, output_template, post_args, save_path, down
         'outtmpl': output_template,
         'quiet': True,
         'no_warnings': True,
-        'extractor_args': {'youtube': ['player_client=ios,android']},
+        'extractor_args': {'youtube': ['player_client=tvhtml5,android']},
         'concurrent_fragment_downloads': 16,
     }
     apply_cookies_opt(ydl_opts)
@@ -593,7 +593,7 @@ def get_video_info(url):
                 'no_warnings': False,
                 'verbose': True,
                 'format': 'all',
-                'extractor_args': {'youtube': ['player_client=ios,android']} if is_youtube else {},
+                'extractor_args': {'youtube': ['player_client=tvhtml5,android']} if is_youtube else {},
             }
             apply_cookies_opt(ydl_opts)
             apply_ipv6_opt(ydl_opts, url)
