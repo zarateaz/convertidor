@@ -565,6 +565,8 @@ def get_video_info(url):
                 'quiet': False,
                 'no_warnings': False,
                 'verbose': True,
+                'format': 'all',
+                'extractor_args': {'youtube': ['player_client=android,web']} if is_youtube else {},
             }
             apply_cookies_opt(ydl_opts)
                 
@@ -643,29 +645,18 @@ def get_video_info(url):
             video_options = []
 
             for h, quality_label in QUALITY_TIERS:
-                if h in available_heights:
-                    v = video_map[h]
-                    size_mb = round(v["size"] / (1024 * 1024), 1) if v["size"] else 0
-                    label = f"{h}p ({quality_label})" if quality_label not in f"{h}p" else f"{h}p ({quality_label})"
-                    # Use safe selector instead of raw format ID
-                    format_spec = f"bestvideo[height={h}]+bestaudio/bestvideo[height<={h}]+bestaudio/best[height<={h}]/best"
-                    video_options.append({
-                        "format_id": format_spec,
-                        "height": h,
-                        "label": f"{h}p ({quality_label})",
-                        "ext": "mp4",
-                        "fps": int(v["fps"]),
-                        "size_mb": size_mb
-                    })
-
-            if not video_options:
+                v = video_map.get(h)
+                size_mb = round(v["size"] / (1024 * 1024), 1) if (v and v.get("size")) else 0
+                fps = int(v["fps"]) if (v and v.get("fps")) else 30
+                
+                format_spec = f"bestvideo[height={h}]+bestaudio/bestvideo[height<={h}]+bestaudio/best[height<={h}]/best"
                 video_options.append({
-                    "format_id": "bestvideo+bestaudio/best",
-                    "height": 0,
-                    "label": "Mejor calidad disponible",
+                    "format_id": format_spec,
+                    "height": h,
+                    "label": f"{h}p ({quality_label})",
                     "ext": "mp4",
-                    "fps": 30,
-                    "size_mb": 0
+                    "fps": fps,
+                    "size_mb": size_mb
                 })
 
             return {
