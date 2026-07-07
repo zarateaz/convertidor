@@ -402,13 +402,23 @@ def run_ytdl_motor(url, format_spec, output_template, post_args, save_path, down
     apply_cookies_opt(ydl_opts)
     
     if download_type == "audio":
-        # Extract best audio and convert to 320kbps MP3
+        # Extract best audio and convert to 320kbps MP3 with full metadata & cover art!
         ydl_opts['format'] = 'bestaudio/best'
-        ydl_opts['postprocessors'] = [{
-            'key': 'FFmpegExtractAudio',
-            'preferredcodec': 'mp3',
-            'preferredquality': '320',
-        }]
+        ydl_opts['writethumbnail'] = True
+        ydl_opts['postprocessors'] = [
+            {
+                'key': 'FFmpegExtractAudio',
+                'preferredcodec': 'mp3',
+                'preferredquality': '320',
+            },
+            {
+                'key': 'FFmpegMetadata',
+                'add_metadata': True,
+            },
+            {
+                'key': 'EmbedThumbnail',
+            }
+        ]
     else:
         if format_spec and "+" not in format_spec and "best" not in format_spec and "audio" not in format_spec and "direct" not in format_spec:
             ydl_opts['format'] = f"{format_spec}+bestaudio/best"

@@ -236,6 +236,19 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     });
 
+    // Paste link from clipboard
+    const btnPaste = document.getElementById("btnPaste");
+    btnPaste.addEventListener("click", async () => {
+        try {
+            const text = await navigator.clipboard.readText();
+            if (text) {
+                youtubeUrlInput.value = text;
+            }
+        } catch (err) {
+            console.warn("Could not read from clipboard:", err);
+        }
+    });
+
     // SCAN URL FOR INFO
     btnScan.addEventListener("click", async () => {
         const url = youtubeUrlInput.value.trim();
