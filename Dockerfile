@@ -32,7 +32,8 @@ RUN apt-get update && \
     ffmpeg \
     curl \
     ca-certificates \
-    unzip && \
+    unzip \
+    aria2 && \
     curl -fsSL https://github.com/denoland/deno/releases/latest/download/deno-x86_64-unknown-linux-gnu.zip -o deno.zip && \
     unzip deno.zip -d /usr/local/bin && \
     rm deno.zip && \

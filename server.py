@@ -396,6 +396,8 @@ def run_ytdl_motor(url, format_spec, output_template, post_args, save_path, down
         'quiet': True,
         'no_warnings': True,
         'extractor_args': {'youtube': ['player_client=android,web']},
+        'external_downloader': 'aria2c',
+        'external_downloader_args': {'aria2c': ['-j', '16', '-x', '16', '-s', '16', '-k', '1M']},
     }
     apply_cookies_opt(ydl_opts)
     
