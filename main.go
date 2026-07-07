@@ -1143,12 +1143,13 @@ func getVideoInfo(urlStr string) (map[string]interface{}, error) {
 		// If YouTube blocked format access (expired cookies), we still offer
 		// quality options and let yt-dlp resolve them at download time.
 		formatSpec := fmt.Sprintf("bestvideo[height=%d]+bestaudio/bestvideo[height<=%d]+bestaudio/best[height<=%d]/best", h, h, h)
+		label := fmt.Sprintf("%dp (%s)", h, tier.label)
 		videoOptions = append(videoOptions, map[string]interface{}{
 			"format_id": formatSpec,
 			"height":    h,
 			"label":     label,
 			"ext":       "mp4",
-			"fps":       int(v.FPS),
+			"fps":       fps,
 			"size_mb":   sizeMB,
 		})
 	}
