@@ -3,10 +3,10 @@
    ========================================================================== */
 
 :root {
-    --bg-dark: #070810;
-    --panel-bg: rgba(13, 17, 30, 0.7);
-    --panel-border: rgba(0, 242, 254, 0.12);
-    --panel-border-hover: rgba(0, 242, 254, 0.3);
+    --bg-dark: #020205;
+    --panel-bg: rgba(5, 6, 14, 0.6);
+    --panel-border: rgba(0, 242, 254, 0.18);
+    --panel-border-hover: rgba(0, 242, 254, 0.6);
     
     /* Neon Palettes */
     --neon-cyan: #00f2fe;
@@ -49,11 +49,17 @@ body {
     width: 100%;
     height: 100%;
     background-image: 
-        linear-gradient(rgba(0, 242, 254, 0.03) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(0, 242, 254, 0.03) 1px, transparent 1px);
-    background-size: 50px 50px;
+        linear-gradient(rgba(0, 242, 254, 0.05) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0, 242, 254, 0.05) 1px, transparent 1px);
+    background-size: 40px 40px;
     z-index: -2;
     pointer-events: none;
+    animation: gridMove 20s linear infinite;
+}
+
+@keyframes gridMove {
+    from { background-position: 0 0; }
+    to { background-position: 40px 40px; }
 }
 
 .glow-orb {
@@ -147,6 +153,16 @@ body {
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     text-shadow: 0 0 30px rgba(0, 242, 254, 0.2);
+    animation: logoGlowPulse 4s alternate infinite ease-in-out;
+}
+
+@keyframes logoGlowPulse {
+    0% {
+        filter: drop-shadow(0 0 5px rgba(0, 242, 254, 0.3));
+    }
+    100% {
+        filter: drop-shadow(0 0 20px rgba(0, 242, 254, 0.6)) drop-shadow(0 0 35px rgba(157, 78, 221, 0.4));
+    }
 }
 
 .subtitle {
@@ -191,16 +207,17 @@ body {
 .panel {
     background: var(--panel-bg);
     border: 1px solid var(--panel-border);
-    border-radius: 12px;
-    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.35);
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
-    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    border-radius: 16px;
+    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.45), inset 0 1px 1px rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .glass-panel:hover {
     border-color: var(--panel-border-hover);
-    box-shadow: 0 12px 40px 0 rgba(0, 242, 254, 0.05);
+    box-shadow: 0 12px 40px 0 rgba(0, 242, 254, 0.08), 0 0 15px rgba(0, 242, 254, 0.05);
+    transform: translateY(-2px);
 }
 
 /* Settings panel */
