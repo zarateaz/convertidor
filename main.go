@@ -978,10 +978,10 @@ func getVideoInfo(urlStr string) (map[string]interface{}, error) {
 
 	ytdlpArgs := []string{
 		"-J",
-		"-f", "b",
 		"--no-playlist",
 		"--no-call-home",
 		"--no-warnings",
+		"--ignore-no-formats-error",
 		"--extractor-args", "youtube:player_client=android,web",
 		"--socket-timeout", "15",
 	}
@@ -1133,18 +1133,16 @@ func getVideoInfo(urlStr string) (map[string]interface{}, error) {
 	for _, tier := range qualityTiers {
 		h := tier.height
 		v, exists := videoMap[h]
-		if !exists {
-			continue
-		}
 		sizeMB := 0.0
-		if v.Size > 0 {
+		fps := 30
+		if exists && v.Size > 0 {
 			sizeMB = math.Round((v.Size/(1024*1024))*10) / 10
+			fps = int(v.FPS)
 		}
-
-		label := fmt.Sprintf("%dp (%s)", h, tier.label)
-		// Use safe selector instead of raw format ID to avoid format unavailability errors
+		// Always show standard tiers regardless of detected formats.
+		// If YouTube blocked format access (expired cookies), we still offer
+		// quality options and let yt-dlp resolve them at download time.
 		formatSpec := fmt.Sprintf("bestvideo[height=%d]+bestaudio/bestvideo[height<=%d]+bestaudio/best[height<=%d]/best", h, h, h)
-
 		videoOptions = append(videoOptions, map[string]interface{}{
 			"format_id": formatSpec,
 			"height":    h,
