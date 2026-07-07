@@ -1,0 +1,16 @@
+# Excluir la carpeta de descargas de los builds de Docker
+downloads/
+downloads
+
+# Excluir binarios compilados locales
+nexus-downloader
+main
+
+# Excluir carpetas de desarrollo y control de versiones
+.git/
+.gitignore
+.chrome-profile/
+__pycache__/
+
+# Excluir cookies locales
+cookies.txt
