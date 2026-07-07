@@ -240,12 +240,16 @@ document.addEventListener("DOMContentLoaded", () => {
     const btnPaste = document.getElementById("btnPaste");
     btnPaste.addEventListener("click", async () => {
         try {
+            if (!navigator.clipboard || !navigator.clipboard.readText) {
+                throw new Error("Clipboard API blocked by browser (insecure HTTP context)");
+            }
             const text = await navigator.clipboard.readText();
             if (text) {
                 youtubeUrlInput.value = text;
             }
         } catch (err) {
             console.warn("Could not read from clipboard:", err);
+            alert("Por seguridad del navegador (al ser una conexión HTTP sin SSL), se bloquea el copiado automático. Por favor, mantén presionado la barra de búsqueda y pega el enlace manualmente.");
         }
     });
 
