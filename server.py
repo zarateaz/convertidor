@@ -672,6 +672,17 @@ def get_video_info(url):
     except Exception as e:
         return {"success": False, "error": str(e)}
 
+def get_latest_downloaded_file():
+    try:
+        directory = "/app/downloads"
+        files = [os.path.join(directory, f) for f in os.listdir(directory) if os.path.isfile(os.path.join(directory, f))]
+        if not files:
+            return None
+        latest_file = max(files, key=os.path.getctime)
+        return os.path.basename(latest_file)
+    except Exception:
+        return None
+
 class FuturisticAPIHandler(http.server.BaseHTTPRequestHandler):
     def log_message(self, format, *args):
         pass
@@ -694,6 +705,19 @@ class FuturisticAPIHandler(http.server.BaseHTTPRequestHandler):
             self.handle_config()
         elif path == "/api/cookies":
             self.handle_get_cookies()
+        elif path.startswith("/downloads/"):
+            filename = urllib.parse.unquote(path[len("/downloads/"):])
+            filename = os.path.basename(filename)
+            filepath = os.path.join("/app/downloads", filename)
+            if os.path.exists(filepath):
+                self.send_response(200)
+                self.send_header("Content-Type", "application/octet-stream")
+                self.send_header("Content-Disposition", f'attachment; filename="{urllib.parse.quote(filename)}"')
+                self.end_headers()
+                with open(filepath, "rb") as f:
+                    self.wfile.write(f.read())
+            else:
+                self.send_error(404, "File Not Found")
         else:
             self.send_error(404, "File Not Found")
             
@@ -804,11 +828,8 @@ class FuturisticAPIHandler(http.server.BaseHTTPRequestHandler):
         url = params.get("url")
         format_id = params.get("format_id")
         download_type = params.get("type", "video")
-        save_path = params.get("save_path", "").strip()
-        if not save_path:
-            save_path = get_default_save_path()
-        else:
-            save_path = os.path.expanduser(save_path)
+        # Override save_path to Docker's mapped persistent downloads folder
+        save_path = "/app/downloads"
             
         title = params.get("title", "video")
         is_playlist = params.get("is_playlist", False)
@@ -866,7 +887,8 @@ class FuturisticAPIHandler(http.server.BaseHTTPRequestHandler):
                 "eta": session.eta,
                 "logs": list(session.logs),
                 "title": session.title,
-                "save_path": session.save_path
+                "save_path": session.save_path,
+                "filename": get_latest_downloaded_file() if session.status == "Completed" else None
             }
         self.send_json(data)
         
@@ -888,7 +910,8 @@ class FuturisticAPIHandler(http.server.BaseHTTPRequestHandler):
                     "eta": session.eta,
                     "logs": list(session.logs),
                     "title": session.title,
-                    "save_path": session.save_path
+                    "save_path": session.save_path,
+                    "filename": get_latest_downloaded_file() if session.status == "Completed" else None
                 }
                 active = session.active
                 

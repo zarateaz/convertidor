@@ -546,6 +546,15 @@ document.addEventListener("DOMContentLoaded", () => {
 
             if (data.status === "Completed") {
                 downloadingTitle.textContent = "DESCARGA COMPLETADA CON ÉXITO";
+                if (data.filename) {
+                    const downloadUrl = `/downloads/${encodeURIComponent(data.filename)}`;
+                    const a = document.createElement("a");
+                    a.href = downloadUrl;
+                    a.download = data.filename;
+                    document.body.appendChild(a);
+                    a.click();
+                    document.body.removeChild(a);
+                }
             } else if (data.status === "Cancelled") {
                 downloadingTitle.textContent = "DESCARGA CANCELADA";
             } else if (data.status === "Failed") {
