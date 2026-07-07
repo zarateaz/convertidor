@@ -926,3 +926,123 @@ body {
         font-size: 1rem;
     }
 }
+
+/* ==========================================================================
+   FLOATING APK PROMOTION BUTTON STYLING (Cyberpunk Theme)
+   ========================================================================== */
+
+.apk-download-float {
+    position: fixed;
+    bottom: 25px;
+    right: 25px;
+    background: rgba(13, 15, 28, 0.95);
+    border: 2px solid var(--neon-magenta);
+    border-radius: 12px;
+    padding: 10px 16px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    text-decoration: none;
+    z-index: 1000;
+    box-shadow: 0 0 15px rgba(255, 0, 127, 0.3), inset 0 0 10px rgba(255, 0, 127, 0.2);
+    backdrop-filter: blur(10px);
+    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    animation: apkFloatingGlow 3s infinite alternate ease-in-out;
+}
+
+.apk-download-float:hover {
+    transform: translateY(-5px) scale(1.05);
+    border-color: var(--neon-cyan);
+    box-shadow: 0 0 25px rgba(0, 242, 254, 0.7), inset 0 0 15px rgba(0, 242, 254, 0.3);
+}
+
+.apk-icon {
+    font-size: 1.8rem;
+    animation: apkIconPulse 1.5s infinite alternate ease-in-out;
+}
+
+.apk-text-group {
+    display: flex;
+    flex-direction: column;
+}
+
+.apk-title {
+    font-family: 'Orbitron', sans-serif;
+    color: #ffffff;
+    font-weight: 800;
+    font-size: 0.85rem;
+    letter-spacing: 1px;
+}
+
+.apk-subtitle {
+    font-family: 'Share Tech Mono', monospace;
+    color: var(--text-secondary);
+    font-size: 0.7rem;
+    margin-top: 2px;
+}
+
+.apk-badge {
+    background: var(--neon-magenta);
+    color: #ffffff;
+    font-family: 'Orbitron', sans-serif;
+    font-size: 0.65rem;
+    font-weight: 900;
+    padding: 2px 6px;
+    border-radius: 4px;
+    letter-spacing: 0.5px;
+    animation: apkBadgeBlink 1s infinite steps(2);
+}
+
+.apk-pulse-ring {
+    position: absolute;
+    top: -4px;
+    left: -4px;
+    right: -4px;
+    bottom: -4px;
+    border: 2px dashed var(--neon-magenta);
+    border-radius: 14px;
+    opacity: 0.3;
+    animation: apkRingRotate 20s linear infinite;
+    pointer-events: none;
+}
+
+.apk-download-float:hover .apk-pulse-ring {
+    border-color: var(--neon-cyan);
+    opacity: 0.5;
+}
+
+/* Animations */
+@keyframes apkFloatingGlow {
+    0% {
+        box-shadow: 0 0 15px rgba(255, 0, 127, 0.3), inset 0 0 10px rgba(255, 0, 127, 0.1);
+    }
+    100% {
+        box-shadow: 0 0 25px rgba(255, 0, 127, 0.7), inset 0 0 15px rgba(255, 0, 127, 0.3);
+    }
+}
+
+@keyframes apkIconPulse {
+    0% { transform: scale(1); }
+    100% { transform: scale(1.2); }
+}
+
+@keyframes apkBadgeBlink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.4; }
+}
+
+@keyframes apkRingRotate {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+/* Responsive adjustment for floating button */
+@media (max-width: 768px) {
+    .apk-download-float {
+        bottom: 15px;
+        right: 15px;
+        left: 15px;
+        justify-content: center;
+        padding: 12px;
+    }
+}
