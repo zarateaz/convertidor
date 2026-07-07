@@ -40,8 +40,7 @@ RUN apt-get update && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
-# Instalar dependencias de Python necesarias para el backend server.py
-RUN pip install --no-cache-dir requests "yt-dlp[default]"
+RUN pip install --no-cache-dir requests "https://github.com/yt-dlp/yt-dlp/archive/master.tar.gz"
 
 # Crear grupo y usuario sin privilegios 'zarate' con UID/GID 1000
 # Esto asegura consistencia absoluta con los permisos del usuario del host (Arch/Garuda)

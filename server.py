@@ -440,8 +440,22 @@ def run_ytdl_motor(url, format_spec, output_template, post_args, save_path, down
         ydl_opts['merge_output_format'] = 'mp4'
         
     try:
-        with yt_dlp.YoutubeDL(ydl_opts) as ydl:
-            ydl.download([url])
+        try:
+            with yt_dlp.YoutubeDL(ydl_opts) as ydl:
+                ydl.download([url])
+        except Exception as e:
+            err_str = str(e)
+            if "Sign in to confirm" in err_str or "confirm you're not a bot" in err_str:
+                print("[NEXUS] Bot check detectado en descarga. Reintentando con cliente Android limpio...")
+                ydl_opts_fallback = ydl_opts.copy()
+                if 'cookiefile' in ydl_opts_fallback:
+                    del ydl_opts_fallback['cookiefile']
+                ydl_opts_fallback['extractor_args'] = {'youtube': ['player_client=android']}
+                
+                with yt_dlp.YoutubeDL(ydl_opts_fallback) as ydl:
+                    ydl.download([url])
+            else:
+                raise e
     except Exception as e:
         raise Exception(f"Fallo en la biblioteca yt-dlp: {str(e)}")
         
@@ -598,8 +612,22 @@ def get_video_info(url):
             apply_cookies_opt(ydl_opts)
             apply_ipv6_opt(ydl_opts, url)
                 
-            with yt_dlp.YoutubeDL(ydl_opts) as ydl:
-                data = ydl.extract_info(url, download=False)
+            try:
+                with yt_dlp.YoutubeDL(ydl_opts) as ydl:
+                    data = ydl.extract_info(url, download=False)
+            except Exception as e:
+                err_str = str(e)
+                if "Sign in to confirm" in err_str or "confirm you're not a bot" in err_str:
+                    print("[NEXUS] Bot check detectado en escaneo. Reintentando con cliente Android limpio...")
+                    ydl_opts_fallback = ydl_opts.copy()
+                    if 'cookiefile' in ydl_opts_fallback:
+                        del ydl_opts_fallback['cookiefile']
+                    ydl_opts_fallback['extractor_args'] = {'youtube': ['player_client=android']}
+                    
+                    with yt_dlp.YoutubeDL(ydl_opts_fallback) as ydl:
+                        data = ydl.extract_info(url, download=False)
+                else:
+                    raise e
                 
             title = data.get("title", "Video sin título")
             uploader = data.get("uploader", "Canal")
