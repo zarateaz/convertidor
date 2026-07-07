@@ -22,17 +22,17 @@ def apply_cookies_opt(ydl_opts):
         print(f"[NEXUS] AVISO: No se detectó archivo de cookies en {COOKIES_FILE}. Continuando sin cookies.")
 
 def apply_ipv6_opt(ydl_opts, url=""):
-    # YouTube has full IPv6 support. Using random source IPs from our /48 subnet block bypasses bot checks completely.
     is_youtube = url and ("youtube.com" in url or "youtu.be" in url or "googlevideo" in url)
     if is_youtube:
         try:
-            blocks = [f"{random.randint(1, 65535):04x}" for _ in range(4)]
-            random_ip = f"2a02:4780:6e:677f:{':'.join(blocks)}"
-            ydl_opts['source_address'] = random_ip
+            # Dado que el proveedor del VPS bloquea el retorno de IPs aleatorias,
+            # usamos la IP principal asignada de IPv6 que sí tiene enrutamiento funcional.
+            main_ip = "2a02:4780:6e:677f::1"
+            ydl_opts['source_address'] = main_ip
             ydl_opts['force_ipv6'] = True
-            print(f"[NEXUS] Enrutando petición mediante IPv6 rotativa: {random_ip}")
+            print(f"[NEXUS] Enrutando petición mediante IPv6 principal: {main_ip}")
         except Exception as e:
-            print(f"[NEXUS] Error al configurar IPv6 rotativa: {e}")
+            print(f"[NEXUS] Error al configurar IPv6: {e}")
 
 # Rotating mobile and desktop User-Agents
 USER_AGENTS = [
