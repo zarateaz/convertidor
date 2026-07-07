@@ -717,15 +717,13 @@ class FuturisticAPIHandler(http.server.BaseHTTPRequestHandler):
                 self.send_header("Content-Length", str(filesize))
                 self.end_headers()
                 
+                import shutil
                 with open(filepath, "rb") as f:
-                    while True:
-                        chunk = f.read(1024 * 64)  # 64KB chunks
-                        if not chunk:
-                            break
-                        try:
-                            self.wfile.write(chunk)
-                        except (ConnectionError, BrokenPipeError):
-                            break
+                    try:
+                        # Use optimized shutil.copyfileobj with 128KB buffer to stream at max speed
+                        shutil.copyfileobj(f, self.wfile, 131072)
+                    except (ConnectionError, BrokenPipeError):
+                        pass
             else:
                 self.send_error(404, "File Not Found")
         else:
