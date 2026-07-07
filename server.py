@@ -29,6 +29,7 @@ def apply_ipv6_opt(ydl_opts, url=""):
             blocks = [f"{random.randint(1, 65535):04x}" for _ in range(4)]
             random_ip = f"2a02:4780:6e:677f:{':'.join(blocks)}"
             ydl_opts['source_address'] = random_ip
+            ydl_opts['force_ipv6'] = True
             print(f"[NEXUS] Enrutando petición mediante IPv6 rotativa: {random_ip}")
         except Exception as e:
             print(f"[NEXUS] Error al configurar IPv6 rotativa: {e}")
