@@ -395,6 +395,8 @@ def run_ytdl_motor(url, format_spec, output_template, post_args, save_path, down
         'outtmpl': output_template,
         'quiet': True,
         'no_warnings': True,
+        'js_runtimes': {'node': {}},
+        'extractor_args': {'youtube': ['player_client=android,web']},
     }
     apply_cookies_opt(ydl_opts)
     
