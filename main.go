@@ -978,10 +978,10 @@ func getVideoInfo(urlStr string) (map[string]interface{}, error) {
 
 	ytdlpArgs := []string{
 		"-J",
+		"-f", "all",
 		"--no-playlist",
 		"--no-call-home",
 		"--no-warnings",
-		"--ignore-no-formats-error",
 		"--extractor-args", "youtube:player_client=android,web",
 		"--socket-timeout", "15",
 	}
