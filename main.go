@@ -628,7 +628,6 @@ func runUniversalMotor(ctx context.Context, req DownloadRequest, formatSpec, out
 
 	cmdArgs := []string{
 		"--newline",
-		"--js-runtimes", "node",
 		"--progress-template", "download:[PROGRESS] %(progress.downloaded_bytes)s/%(progress.total_bytes_estimate)s | %(progress.speed)s | %(progress.eta)s | %(progress._percent_str)s | %(progress._speed_str)s | %(progress._eta_str)s",
 		"-f", fSpec,
 		"-o", outputTemplate,
