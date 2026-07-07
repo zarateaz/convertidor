@@ -978,6 +978,7 @@ func getVideoInfo(urlStr string) (map[string]interface{}, error) {
 
 	ytdlpArgs := []string{
 		"-J",
+		"-f", "b",
 		"--no-playlist",
 		"--no-call-home",
 		"--no-warnings",
