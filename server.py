@@ -713,9 +713,19 @@ class FuturisticAPIHandler(http.server.BaseHTTPRequestHandler):
                 self.send_response(200)
                 self.send_header("Content-Type", "application/octet-stream")
                 self.send_header("Content-Disposition", f'attachment; filename="{urllib.parse.quote(filename)}"')
+                filesize = os.path.getsize(filepath)
+                self.send_header("Content-Length", str(filesize))
                 self.end_headers()
+                
                 with open(filepath, "rb") as f:
-                    self.wfile.write(f.read())
+                    while True:
+                        chunk = f.read(1024 * 64)  # 64KB chunks
+                        if not chunk:
+                            break
+                        try:
+                            self.wfile.write(chunk)
+                        except (ConnectionError, BrokenPipeError):
+                            break
             else:
                 self.send_error(404, "File Not Found")
         else:
