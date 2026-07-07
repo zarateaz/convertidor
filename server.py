@@ -569,7 +569,7 @@ def get_video_info(url):
                 'no_warnings': False,
                 'verbose': True,
                 'format': 'all',
-                'extractor_args': {'youtube': ['player_client=android,web']} if is_youtube else {},
+                'extractor_args': {'youtube': ['player_client=android']} if is_youtube else {},
             }
             apply_cookies_opt(ydl_opts)
                 

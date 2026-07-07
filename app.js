@@ -564,21 +564,18 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     function renderTerminalLogs(logs, status) {
-        if (!logs) return;
+        if (!logs || logs.length === 0) return;
         
-        // Only re-render if new log lines have arrived to prevent heavy DOM updates
-        if (logs.length === lastLogLength) return;
-        lastLogLength = logs.length;
-
-        terminalLog.innerHTML = "";
+        if (lastLogLength === 0 || logs.length < lastLogLength) {
+            terminalLog.innerHTML = "";
+            lastLogLength = 0;
+        }
         
-        logs.forEach(line => {
-            // Ignore custom progress markers in log window to avoid bloating
-            if (line.startsWith("[PROGRESS]")) return;
+        for (let i = lastLogLength; i < logs.length; i++) {
+            const line = logs[i];
+            if (line.startsWith("[PROGRESS]")) continue;
 
             const div = document.createElement("div");
-            
-            // Stylize log lines
             if (line.includes("Error:") || line.includes("ERROR:") || line.includes("failed")) {
                 div.className = "log-error";
             } else if (line.includes("completada") || line.includes("éxito") || line.includes("100%")) {
@@ -588,12 +585,11 @@ document.addEventListener("DOMContentLoaded", () => {
             } else {
                 div.className = "log-info";
             }
-
             div.textContent = line;
             terminalLog.appendChild(div);
-        });
-
-        // Auto Scroll to Bottom of Terminal
+        }
+        
+        lastLogLength = logs.length;
         terminalLog.scrollTop = terminalLog.scrollHeight;
     }
 });
