@@ -6,7 +6,7 @@
 
 # Configuración del servidor remoto VPS (Edita estos parámetros según corresponda)
 VPS_USER="angel"
-VPS_HOST="187.127.20.171" # <-- Coloca aquí la IP o host de tu VPS
+VPS_HOST="168.194.102.34" # <-- Coloca aquí la IP o host de tu VPS
 VPS_PATH="/home/angel/convertidor"
 IMAGE_NAME="nexus-downloader"
 TAG="latest"
