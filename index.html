@@ -70,7 +70,7 @@
                 <input type="text" id="youtubeUrl" class="cyber-input" placeholder="https://www.youtube.com/watch?v=..." autocomplete="off">
                 <button id="btnPaste" class="cyber-btn secondary">PEGAR</button>
                 <button id="btnScan" class="cyber-btn primary">
-                    <span class="btn-text">ESCANEAR</span>
+                    <span class="btn-text">CONVERTIR</span>
                     <span class="btn-scanner"></span>
                 </button>
             </div>
@@ -174,42 +174,54 @@
                 <button id="btnCancel" class="cyber-btn cancel">ABORTAR</button>
             </div>
 
-            <!-- Progress readouts -->
-            <div class="status-metrics">
-                <div class="metric">
-                    <span class="metric-label">PROGRESO:</span>
-                    <span class="metric-value font-mono" id="progressPercent">0%</span>
-                </div>
-                <div class="metric">
-                    <span class="metric-label">VELOCIDAD:</span>
-                    <span class="metric-value font-mono" id="progressSpeed">0 B/s</span>
-                </div>
-                <div class="metric">
-                    <span class="metric-label">TIEMPO RESTANTE (ETA):</span>
-                    <span class="metric-value font-mono" id="progressEta">--:--</span>
-                </div>
-            </div>
-
-            <!-- Glowing Progress Bar -->
-            <div class="progress-bar-container">
-                <div class="progress-bar-fill" id="progressBarFill" style="width: 0%;">
-                    <div class="progress-bar-glow"></div>
-                </div>
-                <div class="progress-bar-grid"></div>
-            </div>
-
-            <!-- Terminal log panel -->
-            <div class="terminal-container">
-                <div class="terminal-header">
-                    <div class="terminal-buttons">
-                        <span></span><span></span><span></span>
+            <div class="progress-center-wrapper">
+                <!-- Circular SVG Progress Ring -->
+                <div class="circular-progress-container">
+                    <svg class="progress-ring" width="180" height="180">
+                        <defs>
+                            <linearGradient id="cyanGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                                <stop offset="0%" stop-color="#00f2fe" />
+                                <stop offset="100%" stop-color="#0052ff" />
+                            </linearGradient>
+                            <filter id="glow">
+                                <feGaussianBlur stdDeviation="5" result="coloredBlur"/>
+                                <feMerge>
+                                    <feMergeNode in="coloredBlur"/>
+                                    <feMergeNode in="SourceGraphic"/>
+                                </feMerge>
+                            </filter>
+                        </defs>
+                        <circle class="progress-ring-track" stroke="rgba(0, 242, 254, 0.05)" stroke-width="8" fill="transparent" r="76" cx="90" cy="90"/>
+                        <circle class="progress-ring-circle" id="progressCircle" stroke="url(#cyanGradient)" stroke-width="8" stroke-dasharray="478" stroke-dashoffset="478" fill="transparent" r="76" cx="90" cy="90" filter="url(#glow)"/>
+                    </svg>
+                    <div class="progress-ring-content">
+                        <div class="progress-percent-val" id="progressPercentCircle">0%</div>
+                        <div class="progress-eta-val" id="progressEtaCircle">--:-- restante</div>
                     </div>
-                    <div class="terminal-title">REGISTRO DE OPERACIÓN (yt-dlp)</div>
                 </div>
-                <div class="terminal-body" id="terminalLog">
-                    <!-- Logs will scroll here -->
+                
+                <!-- Speed metric -->
+                <div class="download-speed-badge">
+                    <span class="speed-label">VELOCIDAD:</span>
+                    <span class="speed-val" id="progressSpeedCircle">0 B/s</span>
                 </div>
             </div>
+
+            <!-- Terminal log panel (Collapsible) -->
+            <details class="terminal-collapsible">
+                <summary class="terminal-toggle-btn">🔧 MOSTRAR CONSOLA DE REGISTROS DE SISTEMA</summary>
+                <div class="terminal-container" style="margin-top: 10px;">
+                    <div class="terminal-header">
+                        <div class="terminal-buttons">
+                            <span></span><span></span><span></span>
+                        </div>
+                        <div class="terminal-title">REGISTRO DE OPERACIÓN (yt-dlp)</div>
+                    </div>
+                    <div class="terminal-body" id="terminalLog">
+                        <!-- Logs will scroll here -->
+                    </div>
+                </div>
+            </details>
         </section>
     </div>
 
@@ -226,7 +238,7 @@
 
     <script src="app.js"></script>
     <script>
-        // Matrix Digital Rain (Blue Matrix Theme)
+        // Matrix Digital Rain (Blue Matrix Theme) with interactive pulses
         const canvas = document.getElementById('matrix-canvas');
         if (canvas) {
             const ctx = canvas.getContext('2d');
@@ -239,7 +251,37 @@
             // Matrix characters mix
             const chars = "ｦｧｨｩｪｫｬｭｮｯｰｱｲｳｴｵｶｷｸｹｺｻｼｽｾｿﾀﾁﾂﾃﾄﾅﾆﾇﾈﾉﾊﾋﾌﾍﾎﾏﾐﾑﾒﾓﾔﾕﾖﾗﾘﾙﾚﾛﾜﾝ1234567890ABCDEFGHIJKLMNOPQRSTUVWXYZ$+-*/=<>[]{}()".split("");
 
+            // Base and dynamic opacity
+            const baseOpacity = 0.38;
+            let currentOpacity = baseOpacity;
+
+            // Shockwave ripple state
+            const ripple = {
+                active: false,
+                x: 0,
+                y: 0,
+                radius: 0,
+                maxRadius: 1500,
+                alpha: 0
+            };
+
+            // Global trigger function to make Matrix shine and ripple!
+            window.triggerMatrixPulse = function(clickX, clickY) {
+                currentOpacity = 1.0;
+                ripple.active = true;
+                ripple.x = clickX || (width / 2);
+                ripple.y = clickY || (height / 2);
+                ripple.radius = 0;
+                ripple.alpha = 1.0;
+            };
+
             function drawMatrixRain() {
+                // Decay flash opacity back to normal
+                if (currentOpacity > baseOpacity) {
+                    currentOpacity -= 0.015;
+                    canvas.style.opacity = currentOpacity;
+                }
+
                 ctx.fillStyle = 'rgba(2, 2, 5, 0.05)';
                 ctx.fillRect(0, 0, width, height);
 
@@ -268,6 +310,25 @@
                         ypos[ind] = y + 20;
                     }
                 });
+
+                // Render shockwave ripple ring
+                if (ripple.active) {
+                    ctx.strokeStyle = `rgba(0, 242, 254, ${ripple.alpha})`;
+                    ctx.lineWidth = 6;
+                    ctx.shadowColor = '#00f2fe';
+                    ctx.shadowBlur = 20;
+                    ctx.beginPath();
+                    ctx.arc(ripple.x, ripple.y, ripple.radius, 0, Math.PI * 2);
+                    ctx.stroke();
+                    ctx.shadowBlur = 0; // Reset shadow glow
+
+                    ripple.radius += 20; // Expansion speed
+                    ripple.alpha -= 0.02; // Fade speed
+
+                    if (ripple.alpha <= 0 || ripple.radius >= ripple.maxRadius) {
+                        ripple.active = false;
+                    }
+                }
             }
 
             setInterval(drawMatrixRain, 35);

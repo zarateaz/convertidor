@@ -35,10 +35,10 @@ document.addEventListener("DOMContentLoaded", () => {
     const downloadingTitle = document.getElementById("downloadingTitle");
     const btnCancel = document.getElementById("btnCancel");
 
-    const progressPercent = document.getElementById("progressPercent");
-    const progressSpeed = document.getElementById("progressSpeed");
-    const progressEta = document.getElementById("progressEta");
-    const progressBarFill = document.getElementById("progressBarFill");
+    const progressPercentCircle = document.getElementById("progressPercentCircle");
+    const progressEtaCircle = document.getElementById("progressEtaCircle");
+    const progressSpeedCircle = document.getElementById("progressSpeedCircle");
+    const progressCircle = document.getElementById("progressCircle");
     const terminalLog = document.getElementById("terminalLog");
 
     // Load saved path from local storage or set default from backend
@@ -254,7 +254,13 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
     // SCAN URL FOR INFO
-    btnScan.addEventListener("click", async () => {
+    btnScan.addEventListener("click", async (e) => {
+        if (typeof window.triggerMatrixPulse === "function") {
+            const rect = btnScan.getBoundingClientRect();
+            const clickX = e.clientX || (rect.left + rect.width / 2);
+            const clickY = e.clientY || (rect.top + rect.height / 2);
+            window.triggerMatrixPulse(clickX, clickY);
+        }
         const url = youtubeUrlInput.value.trim();
         if (!url) {
             showScanError("Por favor, introduce un enlace válido de YouTube, TikTok, Instagram o Facebook.");
@@ -348,7 +354,7 @@ document.addEventListener("DOMContentLoaded", () => {
         } else {
             if (scanMsgInterval) clearInterval(scanMsgInterval);
             btnScan.disabled = false;
-            btnScan.querySelector(".btn-text").textContent = "ESCANEAR";
+            btnScan.querySelector(".btn-text").textContent = "CONVERTIR";
             btnScan.querySelector(".btn-scanner").classList.remove("scanning");
         }
     }
@@ -439,10 +445,10 @@ document.addEventListener("DOMContentLoaded", () => {
                 progressPanel.scrollIntoView({ behavior: "smooth" });
                 
                 // Reset metrics
-                progressPercent.textContent = "0%";
-                progressSpeed.textContent = "0 B/s";
-                progressEta.textContent = "--:--";
-                progressBarFill.style.width = "0%";
+                if (progressPercentCircle) progressPercentCircle.textContent = "0%";
+                if (progressSpeedCircle) progressSpeedCircle.textContent = "0 B/s";
+                if (progressEtaCircle) progressEtaCircle.textContent = "--:-- restante";
+                if (progressCircle) progressCircle.style.strokeDashoffset = "478";
                 terminalLog.innerHTML = `<div class="log-info">Estableciendo túnel de descarga...</div>`;
                 lastLogLength = 0;
 
@@ -542,13 +548,15 @@ document.addEventListener("DOMContentLoaded", () => {
 
     function updateProgressUI(data) {
         // Update metrics
-        progressPercent.textContent = data.percent;
-        progressSpeed.textContent = data.speed;
-        progressEta.textContent = data.eta;
-        
-        // Parse percentage for progress bar fill
         let cleanPercent = parseFloat(data.percent.replace("%", "").trim()) || 0;
-        progressBarFill.style.width = `${cleanPercent}%`;
+        if (progressPercentCircle) progressPercentCircle.textContent = `${Math.round(cleanPercent)}%`;
+        if (progressSpeedCircle) progressSpeedCircle.textContent = data.speed;
+        if (progressEtaCircle) progressEtaCircle.textContent = `${data.eta} restante`;
+        
+        if (progressCircle) {
+            const offset = 478 - (478 * cleanPercent / 100);
+            progressCircle.style.strokeDashoffset = offset;
+        }
 
         // Update title status
         downloadingTitle.textContent = `Descargando: "${data.title}" (${data.status})`;
