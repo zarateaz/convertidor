@@ -776,6 +776,8 @@ class FuturisticAPIHandler(http.server.BaseHTTPRequestHandler):
             self.handle_cancel()
         elif path == "/api/cookies":
             self.handle_save_cookies(params)
+        elif path == "/api/cookies_raw":
+            self.handle_save_cookies_raw(params)
         else:
             self.send_error(404, "API Endpoint Not Found")
             
@@ -844,6 +846,45 @@ class FuturisticAPIHandler(http.server.BaseHTTPRequestHandler):
             self.send_json({"success": True, "message": "Cookies guardadas exitosamente en el VPS."})
         except Exception as e:
             self.send_json({"success": False, "error": f"Error al escribir el archivo: {str(e)}"}, 500)
+            
+    def handle_save_cookies_raw(self, params):
+        cookies_raw = params.get("cookies_raw", "").strip()
+        if not cookies_raw:
+            self.send_json({"success": False, "error": "El contenido raw de las cookies no puede estar vacío."}, 400)
+            return
+            
+        try:
+            netscape_lines = [
+                "# Netscape HTTP Cookie File",
+                "# This file was generated automatically by NEXUS Auto-Syncer",
+                "# Domain\tSubdomains\tPath\tSecure\tExpiry\tName\tValue",
+                ""
+            ]
+            pairs = cookies_raw.split(";")
+            for pair in pairs:
+                pair = pair.strip()
+                if not pair or "=" not in pair:
+                    continue
+                parts = pair.split("=", 1)
+                if len(parts) != 2:
+                    continue
+                name = parts[0].strip()
+                val = parts[1].strip()
+                netscape_lines.append(f".youtube.com\tTRUE\t/\tTRUE\t2082758400\t{name}\t{val}")
+                
+            cookies_text = "\n".join(netscape_lines) + "\n"
+            
+            with open(COOKIES_FILE, "w", encoding="utf-8") as f:
+                f.write(cookies_text)
+            
+            try:
+                os.chmod(COOKIES_FILE, 0o600)
+            except Exception:
+                pass
+                
+            self.send_json({"success": True, "message": "Cookies raw convertidas y guardadas exitosamente en el VPS."})
+        except Exception as e:
+            self.send_json({"success": False, "error": f"Error al procesar cookies: {str(e)}"}, 500)
         
     def handle_info(self, params):
         url = params.get("url")
