@@ -21,6 +21,18 @@ def apply_cookies_opt(ydl_opts):
     else:
         print(f"[NEXUS] AVISO: No se detectó archivo de cookies en {COOKIES_FILE}. Continuando sin cookies.")
 
+def apply_ipv6_opt(ydl_opts, url=""):
+    # YouTube has full IPv6 support. Using random source IPs from our /48 subnet block bypasses bot checks completely.
+    is_youtube = url and ("youtube.com" in url or "youtu.be" in url or "googlevideo" in url)
+    if is_youtube:
+        try:
+            blocks = [f"{random.randint(1, 65535):04x}" for _ in range(4)]
+            random_ip = f"2a02:4780:6e:677f:{':'.join(blocks)}"
+            ydl_opts['source_address'] = random_ip
+            print(f"[NEXUS] Enrutando petición mediante IPv6 rotativa: {random_ip}")
+        except Exception as e:
+            print(f"[NEXUS] Error al configurar IPv6 rotativa: {e}")
+
 # Rotating mobile and desktop User-Agents
 USER_AGENTS = [
     "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
@@ -400,6 +412,7 @@ def run_ytdl_motor(url, format_spec, output_template, post_args, save_path, down
         'external_downloader_args': {'aria2c': ['-j', '16', '-x', '16', '-s', '16', '-k', '1M']},
     }
     apply_cookies_opt(ydl_opts)
+    apply_ipv6_opt(ydl_opts, url)
     
     if download_type == "audio":
         # Extract best audio and convert to 320kbps MP3 with full metadata & cover art!
@@ -542,6 +555,7 @@ def get_video_info(url):
                 'no_warnings': True,
             }
             apply_cookies_opt(ydl_opts)
+            apply_ipv6_opt(ydl_opts, url)
             with yt_dlp.YoutubeDL(ydl_opts) as ydl:
                 data = ydl.extract_info(url, download=False)
                 
@@ -582,6 +596,7 @@ def get_video_info(url):
                 'extractor_args': {'youtube': ['player_client=ios,android']} if is_youtube else {},
             }
             apply_cookies_opt(ydl_opts)
+            apply_ipv6_opt(ydl_opts, url)
                 
             with yt_dlp.YoutubeDL(ydl_opts) as ydl:
                 data = ydl.extract_info(url, download=False)
