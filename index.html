@@ -11,6 +11,7 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
+    <canvas id="matrix-canvas"></canvas>
     <div class="cyber-grid"></div>
     <div class="glow-orb purple-orb"></div>
     <div class="glow-orb cyan-orb"></div>
@@ -224,5 +225,62 @@
     </a>
 
     <script src="app.js"></script>
+    <script>
+        // Matrix Digital Rain (Blue Matrix Theme)
+        const canvas = document.getElementById('matrix-canvas');
+        if (canvas) {
+            const ctx = canvas.getContext('2d');
+            let width = canvas.width = window.innerWidth;
+            let height = canvas.height = window.innerHeight;
+
+            const cols = Math.floor(width / 20) + 1;
+            const ypos = Array(cols).fill(0);
+
+            // Matrix characters mix
+            const chars = "ｦｧｨｩｪｫｬｭｮｯｰｱｲｳｴｵｶｷｸｹｺｻｼｽｾｿﾀﾁﾂﾃﾄﾅﾆﾇﾈﾉﾊﾋﾌﾍﾎﾏﾐﾑﾒﾓﾔﾕﾖﾗﾘﾙﾚﾛﾜﾝ1234567890ABCDEFGHIJKLMNOPQRSTUVWXYZ$+-*/=<>[]{}()".split("");
+
+            function drawMatrixRain() {
+                ctx.fillStyle = 'rgba(2, 2, 5, 0.05)';
+                ctx.fillRect(0, 0, width, height);
+
+                ctx.font = '15px monospace';
+
+                ypos.forEach((y, ind) => {
+                    const text = chars[Math.floor(Math.random() * chars.length)];
+                    const x = ind * 20;
+
+                    const rand = Math.random();
+                    if (rand > 0.985) {
+                        ctx.fillStyle = '#ffffff'; // White leader
+                    } else if (rand > 0.70) {
+                        ctx.fillStyle = '#00f2fe'; // Bright cyan
+                    } else if (rand > 0.35) {
+                        ctx.fillStyle = '#0072ff'; // Cobalt blue
+                    } else {
+                        ctx.fillStyle = '#0a2342'; // Dark electric blue
+                    }
+
+                    ctx.fillText(text, x, y);
+
+                    if (y > 100 + Math.random() * 10000) {
+                        ypos[ind] = 0;
+                    } else {
+                        ypos[ind] = y + 20;
+                    }
+                });
+            }
+
+            setInterval(drawMatrixRain, 35);
+
+            window.addEventListener('resize', () => {
+                width = canvas.width = window.innerWidth;
+                height = canvas.height = window.innerHeight;
+                const newCols = Math.floor(width / 20) + 1;
+                while (ypos.length < newCols) {
+                    ypos.push(0);
+                }
+            });
+        }
+    </script>
 </body>
 </html>

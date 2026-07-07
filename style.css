@@ -4,20 +4,20 @@
 
 :root {
     --bg-dark: #020205;
-    --panel-bg: rgba(5, 6, 14, 0.6);
-    --panel-border: rgba(0, 242, 254, 0.18);
-    --panel-border-hover: rgba(0, 242, 254, 0.6);
+    --panel-bg: rgba(5, 7, 24, 0.42);
+    --panel-border: rgba(0, 242, 254, 0.15);
+    --panel-border-hover: rgba(0, 242, 254, 0.7);
     
-    /* Neon Palettes */
+    /* Neon Palettes (Matrix Blue Theme) */
     --neon-cyan: #00f2fe;
-    --neon-purple: #9d4edd;
-    --neon-magenta: #ff007f;
+    --neon-purple: #0052ff;
+    --neon-magenta: #00a8ff;
     --neon-green: #39ff14;
     
     /* Glow shadows */
-    --glow-cyan: 0 0 15px rgba(0, 242, 254, 0.4);
-    --glow-purple: 0 0 15px rgba(157, 78, 221, 0.4);
-    --glow-magenta: 0 0 20px rgba(255, 0, 127, 0.5);
+    --glow-cyan: 0 0 15px rgba(0, 242, 254, 0.5);
+    --glow-purple: 0 0 15px rgba(0, 82, 255, 0.5);
+    --glow-magenta: 0 0 20px rgba(0, 168, 255, 0.6);
     --glow-green: 0 0 10px rgba(57, 255, 20, 0.3);
     
     /* Text colors */
@@ -39,6 +39,17 @@ body {
     min-height: 100vh;
     overflow-x: hidden;
     position: relative;
+}
+
+#matrix-canvas {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: -3;
+    pointer-events: none;
+    opacity: 0.38;
 }
 
 /* Background Cyber Grid & Floating Orbs */
