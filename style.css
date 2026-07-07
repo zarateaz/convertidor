@@ -976,80 +976,123 @@ body {
     position: fixed;
     bottom: 25px;
     right: 25px;
-    background: rgba(13, 15, 28, 0.95);
+    width: 70px;
+    height: 70px;
+    background: rgba(7, 8, 16, 0.92);
     border: 2px solid var(--neon-magenta);
-    border-radius: 12px;
-    padding: 10px 16px;
+    border-radius: 50%;
     display: flex;
     align-items: center;
-    gap: 12px;
+    justify-content: center;
     text-decoration: none;
     z-index: 1000;
-    box-shadow: 0 0 15px rgba(255, 0, 127, 0.3), inset 0 0 10px rgba(255, 0, 127, 0.2);
+    box-shadow: 0 0 20px rgba(255, 0, 127, 0.4), inset 0 0 10px rgba(255, 0, 127, 0.2);
     backdrop-filter: blur(10px);
     transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
     animation: apkFloatingGlow 3s infinite alternate ease-in-out;
 }
 
 .apk-download-float:hover {
-    transform: translateY(-5px) scale(1.05);
+    transform: translateY(-5px) scale(1.08);
     border-color: var(--neon-cyan);
     box-shadow: 0 0 25px rgba(0, 242, 254, 0.7), inset 0 0 15px rgba(0, 242, 254, 0.3);
 }
 
 .apk-icon {
-    font-size: 1.8rem;
+    font-size: 2.1rem;
+    z-index: 10;
     animation: apkIconPulse 1.5s infinite alternate ease-in-out;
 }
 
-.apk-text-group {
-    display: flex;
-    flex-direction: column;
+/* Rotating SVG track around the circle */
+.apk-progress {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    transform: rotate(-90deg);
+    pointer-events: none;
 }
 
-.apk-title {
-    font-family: 'Orbitron', sans-serif;
-    color: #ffffff;
-    font-weight: 800;
-    font-size: 0.85rem;
-    letter-spacing: 1px;
+.apk-progress-track {
+    stroke: rgba(255, 255, 255, 0.03);
 }
 
-.apk-subtitle {
-    font-family: 'Share Tech Mono', monospace;
-    color: var(--text-secondary);
-    font-size: 0.7rem;
-    margin-top: 2px;
+.apk-progress-circle {
+    stroke-linecap: round;
+    transition: stroke-dashoffset 0.3s;
+    animation: apkSpinProgress 4s linear infinite;
 }
 
-.apk-badge {
-    background: var(--neon-magenta);
-    color: #ffffff;
-    font-family: 'Orbitron', sans-serif;
-    font-size: 0.65rem;
-    font-weight: 900;
-    padding: 2px 6px;
-    border-radius: 4px;
-    letter-spacing: 0.5px;
-    animation: apkBadgeBlink 1s infinite steps(2);
+@keyframes apkSpinProgress {
+    0% {
+        stroke-dashoffset: 233;
+        stroke: var(--neon-magenta);
+    }
+    50% {
+        stroke: var(--neon-cyan);
+    }
+    100% {
+        stroke-dashoffset: -233;
+        stroke: var(--neon-magenta);
+    }
 }
 
 .apk-pulse-ring {
     position: absolute;
-    top: -4px;
-    left: -4px;
-    right: -4px;
-    bottom: -4px;
-    border: 2px dashed var(--neon-magenta);
-    border-radius: 14px;
-    opacity: 0.3;
+    top: -8px;
+    left: -8px;
+    right: -8px;
+    bottom: -8px;
+    border: 1px dashed rgba(255, 0, 127, 0.3);
+    border-radius: 50%;
     animation: apkRingRotate 20s linear infinite;
     pointer-events: none;
 }
 
-.apk-download-float:hover .apk-pulse-ring {
-    border-color: var(--neon-cyan);
-    opacity: 0.5;
+.apk-pulse-ring-outer {
+    position: absolute;
+    top: -14px;
+    left: -14px;
+    right: -14px;
+    bottom: -14px;
+    border: 1px dotted rgba(0, 242, 254, 0.2);
+    border-radius: 50%;
+    animation: apkRingRotateReverse 25s linear infinite;
+    pointer-events: none;
+}
+
+@keyframes apkRingRotateReverse {
+    from { transform: rotate(360deg); }
+    to { transform: rotate(0deg); }
+}
+
+/* Tooltip info on hover */
+.apk-tooltip {
+    position: absolute;
+    bottom: 80px;
+    right: 0;
+    background: rgba(5, 7, 24, 0.95);
+    border: 1px solid var(--neon-cyan);
+    color: #fff;
+    padding: 6px 12px;
+    border-radius: 6px;
+    font-family: 'Orbitron', sans-serif;
+    font-size: 10px;
+    white-space: nowrap;
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    transform: translateY(10px);
+    transition: all 0.3s ease;
+    box-shadow: var(--glow-cyan);
+}
+
+.apk-download-float:hover .apk-tooltip {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
 }
 
 /* Animations */
@@ -1064,12 +1107,7 @@ body {
 
 @keyframes apkIconPulse {
     0% { transform: scale(1); }
-    100% { transform: scale(1.2); }
-}
-
-@keyframes apkBadgeBlink {
-    0%, 100% { opacity: 1; }
-    50% { opacity: 0.4; }
+    100% { transform: scale(1.15); }
 }
 
 @keyframes apkRingRotate {
@@ -1080,10 +1118,14 @@ body {
 /* Responsive adjustment for floating button */
 @media (max-width: 768px) {
     .apk-download-float {
-        bottom: 15px;
-        right: 15px;
-        left: 15px;
-        justify-content: center;
-        padding: 12px;
+        bottom: 20px;
+        right: 20px;
+        left: auto;
+        width: 60px;
+        height: 60px;
+    }
+    
+    .apk-icon {
+        font-size: 1.8rem;
     }
 }

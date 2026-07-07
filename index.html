@@ -226,14 +226,15 @@
     </div>
 
     <!-- BOTÓN PUBLICITARIO FLOTANTE PARA DESCARGA DE LA APK -->
-    <a href="/downloads/zarate-player.apk" class="apk-download-float" download>
+    <a href="/downloads/zarate-player.apk" class="apk-download-float" download title="Descargar APK Zarate Player">
         <div class="apk-pulse-ring"></div>
+        <div class="apk-pulse-ring-outer"></div>
         <span class="apk-icon">🤖</span>
-        <div class="apk-text-group">
-            <span class="apk-title">DESCARGAR APP MÓVIL</span>
-            <span class="apk-subtitle">ZARATE PLAYER v1.0.0</span>
-        </div>
-        <span class="apk-badge">APK</span>
+        <svg class="apk-progress" viewBox="0 0 80 80">
+            <circle class="apk-progress-track" stroke="rgba(0, 242, 254, 0.05)" stroke-width="2" fill="transparent" r="37" cx="40" cy="40"/>
+            <circle class="apk-progress-circle" stroke="var(--neon-cyan)" stroke-width="2" stroke-dasharray="233" stroke-dashoffset="180" fill="transparent" r="37" cx="40" cy="40"/>
+        </svg>
+        <div class="apk-tooltip">DESCARGAR APK</div>
     </a>
 
     <script src="app.js"></script>
