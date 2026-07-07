@@ -395,7 +395,7 @@ def run_ytdl_motor(url, format_spec, output_template, post_args, save_path, down
         'outtmpl': output_template,
         'quiet': True,
         'no_warnings': True,
-        'extractor_args': {'youtube': ['player_client=android,web']},
+        'extractor_args': {'youtube': ['player_client=ios,android']},
         'external_downloader': 'aria2c',
         'external_downloader_args': {'aria2c': ['-j', '16', '-x', '16', '-s', '16', '-k', '1M']},
     }
@@ -579,7 +579,7 @@ def get_video_info(url):
                 'no_warnings': False,
                 'verbose': True,
                 'format': 'all',
-                'extractor_args': {'youtube': ['player_client=android']} if is_youtube else {},
+                'extractor_args': {'youtube': ['player_client=ios,android']} if is_youtube else {},
             }
             apply_cookies_opt(ydl_opts)
                 
@@ -822,7 +822,7 @@ class FuturisticAPIHandler(http.server.BaseHTTPRequestHandler):
                 f.write(cookies_text + "\n")
             
             try:
-                os.chmod(COOKIES_FILE, 0o666)
+                os.chmod(COOKIES_FILE, 0o600)
             except Exception:
                 pass
                 
