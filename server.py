@@ -24,6 +24,12 @@ def apply_cookies_opt(ydl_opts):
 def apply_ipv6_opt(ydl_opts, url=""):
     is_youtube = url and ("youtube.com" in url or "youtu.be" in url or "googlevideo" in url)
     if is_youtube:
+        # Si estamos usando cookies, NO forzamos IPv6. Las cookies autenticadas funcionan
+        # mucho mejor sobre IPv4 (alineado con la familia de IPs del navegador original).
+        if 'cookiefile' in ydl_opts:
+            print("[NEXUS] Cookies detectadas. Usando enrutamiento estándar IPv4 para mantener consistencia de sesión.")
+            return
+        
         try:
             # Dado que el proveedor del VPS bloquea el retorno de IPs aleatorias,
             # usamos la IP principal asignada de IPv6 que sí tiene enrutamiento funcional.
@@ -449,6 +455,11 @@ def run_ytdl_motor(url, format_spec, output_template, post_args, save_path, down
                 ydl_opts_fallback = ydl_opts.copy()
                 if 'cookiefile' in ydl_opts_fallback:
                     del ydl_opts_fallback['cookiefile']
+                if 'source_address' in ydl_opts_fallback:
+                    del ydl_opts_fallback['source_address']
+                if 'force_ipv6' in ydl_opts_fallback:
+                    del ydl_opts_fallback['force_ipv6']
+                apply_ipv6_opt(ydl_opts_fallback, url)
                 ydl_opts_fallback['extractor_args'] = {'youtube': ['player_client=android']}
                 
                 with yt_dlp.YoutubeDL(ydl_opts_fallback) as ydl:
@@ -620,6 +631,11 @@ def get_video_info(url):
                     ydl_opts_fallback = ydl_opts.copy()
                     if 'cookiefile' in ydl_opts_fallback:
                         del ydl_opts_fallback['cookiefile']
+                    if 'source_address' in ydl_opts_fallback:
+                        del ydl_opts_fallback['source_address']
+                    if 'force_ipv6' in ydl_opts_fallback:
+                        del ydl_opts_fallback['force_ipv6']
+                    apply_ipv6_opt(ydl_opts_fallback, url)
                     ydl_opts_fallback['extractor_args'] = {'youtube': ['player_client=android']}
                     
                     with yt_dlp.YoutubeDL(ydl_opts_fallback) as ydl:
