@@ -40,7 +40,7 @@ RUN apt-get update && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
-RUN pip install --no-cache-dir requests "https://github.com/yt-dlp/yt-dlp/archive/master.tar.gz"
+RUN pip install --no-cache-dir requests "https://github.com/yt-dlp/yt-dlp/archive/master.tar.gz?v=202607080015"
 
 # Crear grupo y usuario sin privilegios 'zarate' con UID/GID 1000
 # Esto asegura consistencia absoluta con los permisos del usuario del host (Arch/Garuda)
