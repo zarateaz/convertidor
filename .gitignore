@@ -1,3 +1,10 @@
+# Dependencias de Node.js — NUNCA subir al repo
+node_modules/
+package-lock.json
+.expo/
+dist/
+web-build/
+
 # Archivos compilados e imágenes de Docker
 nexus-downloader
 nexus-downloader.tar.gz
