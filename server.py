@@ -460,7 +460,7 @@ def run_ytdl_motor(url, format_spec, output_template, post_args, save_path, down
                 if 'force_ipv6' in ydl_opts_fallback:
                     del ydl_opts_fallback['force_ipv6']
                 apply_ipv6_opt(ydl_opts_fallback, url)
-                ydl_opts_fallback['extractor_args'] = {'youtube': ['player_client=android']}
+                ydl_opts_fallback['extractor_args'] = {'youtube': ['player_client=tvhtml5']}
                 
                 with yt_dlp.YoutubeDL(ydl_opts_fallback) as ydl:
                     ydl.download([url])
@@ -636,7 +636,7 @@ def get_video_info(url):
                     if 'force_ipv6' in ydl_opts_fallback:
                         del ydl_opts_fallback['force_ipv6']
                     apply_ipv6_opt(ydl_opts_fallback, url)
-                    ydl_opts_fallback['extractor_args'] = {'youtube': ['player_client=android']}
+                    ydl_opts_fallback['extractor_args'] = {'youtube': ['player_client=tvhtml5']}
                     
                     with yt_dlp.YoutubeDL(ydl_opts_fallback) as ydl:
                         data = ydl.extract_info(url, download=False)
