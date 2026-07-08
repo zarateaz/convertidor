@@ -1,0 +1,55 @@
+{
+  "expo": {
+    "name": "NEXUS PLAYER",
+    "slug": "nexus-player",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "dark",
+    "splash": {
+      "backgroundColor": "#090a0f"
+    },
+    "assetBundlePatterns": ["**/*"],
+    "ios": {
+      "supportsTablet": false,
+      "infoPlist": {
+        "UIBackgroundModes": ["audio"],
+        "NSMicrophoneUsageDescription": "NEXUS PLAYER no usa el micrófono.",
+        "NSAppleMusicUsageDescription": "NEXUS PLAYER necesita acceso a tu biblioteca de música."
+      }
+    },
+    "android": {
+      "package": "com.zarateaz.nexusplayer",
+      "versionCode": 1,
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#090a0f"
+      },
+      "permissions": [
+        "android.permission.INTERNET",
+        "android.permission.READ_EXTERNAL_STORAGE",
+        "android.permission.READ_MEDIA_AUDIO",
+        "android.permission.READ_MEDIA_VIDEO",
+        "android.permission.FOREGROUND_SERVICE",
+        "android.permission.FOREGROUND_SERVICE_MEDIA_PLAYBACK",
+        "android.permission.WAKE_LOCK",
+        "android.permission.RECEIVE_BOOT_COMPLETED"
+      ]
+    },
+    "plugins": [
+      [
+        "expo-av",
+        {
+          "microphonePermission": "NEXUS PLAYER no requiere micrófono."
+        }
+      ],
+      "expo-document-picker"
+    ],
+    "extra": {
+      "vpsBaseUrl": "http://168.194.102.34:3006",
+      "eas": {
+        "projectId": "nexus-player-zarate"
+      }
+    }
+  }
+}
