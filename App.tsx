@@ -65,6 +65,276 @@ const formatTime = (millis: number) => {
 };
 
 // ==========================================================================
+// PLASMA ORB — ESFERA HOLOGRÁFICA REACTIVA AL AUDIO
+// ==========================================================================
+function PlasmaOrb({ isPlaying }: { isPlaying: boolean }) {
+  // Escala de la esfera principal (respira con la música)
+  const orbScale = useRef(new Animated.Value(1)).current;
+  // Opacidad del glow central
+  const glowOpacity = useRef(new Animated.Value(0.5)).current;
+  // Rotación del anillo orbital externo
+  const rotateAnim = useRef(new Animated.Value(0)).current;
+  // Tres anillos de onda expansiva que irradian hacia afuera
+  const ring1Scale = useRef(new Animated.Value(1)).current;
+  const ring1Opacity = useRef(new Animated.Value(0.7)).current;
+  const ring2Scale = useRef(new Animated.Value(1)).current;
+  const ring2Opacity = useRef(new Animated.Value(0.5)).current;
+  const ring3Scale = useRef(new Animated.Value(1)).current;
+  const ring3Opacity = useRef(new Animated.Value(0.3)).current;
+  // Partículas de plasma parpadeando
+  const particle1 = useRef(new Animated.Value(0.2)).current;
+  const particle2 = useRef(new Animated.Value(0.6)).current;
+  const particle3 = useRef(new Animated.Value(0.4)).current;
+
+  useEffect(() => {
+    if (!isPlaying) {
+      // Estado de reposo: pulso suave y lento
+      const restLoop = Animated.loop(
+        Animated.sequence([
+          Animated.parallel([
+            Animated.timing(orbScale, { toValue: 1.05, duration: 1800, useNativeDriver: true }),
+            Animated.timing(glowOpacity, { toValue: 0.35, duration: 1800, useNativeDriver: true }),
+          ]),
+          Animated.parallel([
+            Animated.timing(orbScale, { toValue: 1.0, duration: 1800, useNativeDriver: true }),
+            Animated.timing(glowOpacity, { toValue: 0.15, duration: 1800, useNativeDriver: true }),
+          ]),
+        ])
+      );
+      restLoop.start();
+      return () => restLoop.stop();
+    }
+
+    // ── ANIMACIÓN DE REPRODUCCIÓN ──────────────────────────────────
+    // Esfera principal: latido rápido agresivo
+    const orbLoop = Animated.loop(
+      Animated.sequence([
+        Animated.timing(orbScale, { toValue: 1.22, duration: 180, useNativeDriver: true }),
+        Animated.timing(orbScale, { toValue: 0.96, duration: 200, useNativeDriver: true }),
+        Animated.timing(orbScale, { toValue: 1.14, duration: 160, useNativeDriver: true }),
+        Animated.timing(orbScale, { toValue: 1.0, duration: 400, useNativeDriver: true }),
+      ])
+    );
+
+    // Glow central parpadeante
+    const glowLoop = Animated.loop(
+      Animated.sequence([
+        Animated.timing(glowOpacity, { toValue: 1.0, duration: 200, useNativeDriver: true }),
+        Animated.timing(glowOpacity, { toValue: 0.4, duration: 350, useNativeDriver: true }),
+        Animated.timing(glowOpacity, { toValue: 0.8, duration: 200, useNativeDriver: true }),
+        Animated.timing(glowOpacity, { toValue: 0.3, duration: 450, useNativeDriver: true }),
+      ])
+    );
+
+    // Onda 1: rápida, fuerte
+    const wave1 = Animated.loop(
+      Animated.parallel([
+        Animated.sequence([
+          Animated.timing(ring1Scale, { toValue: 2.2, duration: 700, useNativeDriver: true }),
+          Animated.timing(ring1Scale, { toValue: 1.0, duration: 0, useNativeDriver: true }),
+        ]),
+        Animated.sequence([
+          Animated.timing(ring1Opacity, { toValue: 0, duration: 700, useNativeDriver: true }),
+          Animated.timing(ring1Opacity, { toValue: 0.7, duration: 0, useNativeDriver: true }),
+        ]),
+      ])
+    );
+
+    // Onda 2: desfasada 230ms
+    const wave2 = Animated.loop(
+      Animated.sequence([
+        Animated.delay(230),
+        Animated.parallel([
+          Animated.sequence([
+            Animated.timing(ring2Scale, { toValue: 2.5, duration: 750, useNativeDriver: true }),
+            Animated.timing(ring2Scale, { toValue: 1.0, duration: 0, useNativeDriver: true }),
+          ]),
+          Animated.sequence([
+            Animated.timing(ring2Opacity, { toValue: 0, duration: 750, useNativeDriver: true }),
+            Animated.timing(ring2Opacity, { toValue: 0.5, duration: 0, useNativeDriver: true }),
+          ]),
+        ]),
+      ])
+    );
+
+    // Onda 3: desfasada 480ms
+    const wave3 = Animated.loop(
+      Animated.sequence([
+        Animated.delay(480),
+        Animated.parallel([
+          Animated.sequence([
+            Animated.timing(ring3Scale, { toValue: 2.8, duration: 800, useNativeDriver: true }),
+            Animated.timing(ring3Scale, { toValue: 1.0, duration: 0, useNativeDriver: true }),
+          ]),
+          Animated.sequence([
+            Animated.timing(ring3Opacity, { toValue: 0, duration: 800, useNativeDriver: true }),
+            Animated.timing(ring3Opacity, { toValue: 0.3, duration: 0, useNativeDriver: true }),
+          ]),
+        ]),
+      ])
+    );
+
+    // Rotación del anillo orbital
+    const rotLoop = Animated.loop(
+      Animated.timing(rotateAnim, { toValue: 1, duration: 3500, useNativeDriver: true })
+    );
+
+    // Partículas de plasma
+    const p1 = Animated.loop(Animated.sequence([
+      Animated.timing(particle1, { toValue: 1, duration: 350, useNativeDriver: true }),
+      Animated.timing(particle1, { toValue: 0.1, duration: 350, useNativeDriver: true }),
+    ]));
+    const p2 = Animated.loop(Animated.sequence([
+      Animated.delay(120),
+      Animated.timing(particle2, { toValue: 0.1, duration: 400, useNativeDriver: true }),
+      Animated.timing(particle2, { toValue: 1, duration: 400, useNativeDriver: true }),
+    ]));
+    const p3 = Animated.loop(Animated.sequence([
+      Animated.delay(240),
+      Animated.timing(particle3, { toValue: 1, duration: 300, useNativeDriver: true }),
+      Animated.timing(particle3, { toValue: 0.2, duration: 300, useNativeDriver: true }),
+    ]));
+
+    orbLoop.start(); glowLoop.start();
+    wave1.start(); wave2.start(); wave3.start();
+    rotLoop.start();
+    p1.start(); p2.start(); p3.start();
+
+    return () => {
+      orbLoop.stop(); glowLoop.stop();
+      wave1.stop(); wave2.stop(); wave3.stop();
+      rotLoop.stop();
+      p1.stop(); p2.stop(); p3.stop();
+    };
+  }, [isPlaying]);
+
+  const spin = rotateAnim.interpolate({
+    inputRange: [0, 1],
+    outputRange: ["0deg", "360deg"],
+  });
+
+  const ORB = 130; // diámetro de la esfera en dp
+
+  return (
+    <View style={orbStyles.orbContainer}>
+      {/* ── ONDAS EXPANSIVAS ─────────────────────────── */}
+      {[{ s: ring1Scale, o: ring1Opacity, color: "rgba(0,180,255,0.25)" },
+        { s: ring2Scale, o: ring2Opacity, color: "rgba(0,120,255,0.18)" },
+        { s: ring3Scale, o: ring3Opacity, color: "rgba(0,60,220,0.12)" }
+      ].map((ring, idx) => (
+        <Animated.View
+          key={idx}
+          style={[
+            orbStyles.ring,
+            {
+              width: ORB,
+              height: ORB,
+              borderRadius: ORB / 2,
+              borderColor: ring.color,
+              transform: [{ scale: ring.s }],
+              opacity: ring.o,
+            },
+          ]}
+        />
+      ))}
+
+      {/* ── ANILLO ORBITAL ROTANTE ───────────────────── */}
+      <Animated.View
+        style={[
+          orbStyles.orbitRing,
+          {
+            width: ORB + 50,
+            height: ORB + 50,
+            borderRadius: (ORB + 50) / 2,
+            transform: [{ rotate: spin }],
+          },
+        ]}
+      />
+
+      {/* ── ESFERA PRINCIPAL ─────────────────────────── */}
+      <Animated.View
+        style={[
+          orbStyles.orbCore,
+          {
+            width: ORB,
+            height: ORB,
+            borderRadius: ORB / 2,
+            transform: [{ scale: orbScale }],
+          },
+        ]}
+      >
+        {/* Glow interior */}
+        <Animated.View style={[orbStyles.innerGlow, { opacity: glowOpacity }]} />
+        {/* Reflejo de luz superior */}
+        <View style={orbStyles.highlight} />
+        {/* Partículas internas */}
+        <Animated.View style={[orbStyles.particle, orbStyles.p1, { opacity: particle1 }]} />
+        <Animated.View style={[orbStyles.particle, orbStyles.p2, { opacity: particle2 }]} />
+        <Animated.View style={[orbStyles.particle, orbStyles.p3, { opacity: particle3 }]} />
+      </Animated.View>
+    </View>
+  );
+}
+
+const orbStyles = StyleSheet.create({
+  orbContainer: {
+    alignItems: "center",
+    justifyContent: "center",
+    height: 220,
+    position: "relative",
+  },
+  ring: {
+    position: "absolute",
+    borderWidth: 1.5,
+  },
+  orbitRing: {
+    position: "absolute",
+    borderWidth: 1,
+    borderColor: "transparent",
+    borderTopColor: "rgba(0,200,255,0.5)",
+    borderRightColor: "rgba(0,100,255,0.3)",
+  },
+  orbCore: {
+    backgroundColor: "#001a3d",
+    borderWidth: 2,
+    borderColor: "rgba(0,200,255,0.8)",
+    justifyContent: "center",
+    alignItems: "center",
+    overflow: "hidden",
+    shadowColor: "#00aaff",
+    shadowOffset: { width: 0, height: 0 },
+    shadowOpacity: 1,
+    shadowRadius: 30,
+    elevation: 20,
+  },
+  innerGlow: {
+    position: "absolute",
+    width: "80%",
+    height: "80%",
+    borderRadius: 100,
+    backgroundColor: "rgba(0,160,255,0.25)",
+  },
+  highlight: {
+    position: "absolute",
+    top: "12%",
+    left: "18%",
+    width: "38%",
+    height: "22%",
+    borderRadius: 30,
+    backgroundColor: "rgba(160,230,255,0.22)",
+    transform: [{ rotate: "-25deg" }],
+  },
+  particle: {
+    position: "absolute",
+    borderRadius: 4,
+    backgroundColor: "#00ddff",
+  },
+  p1: { width: 5, height: 5, top: "25%", left: "30%" },
+  p2: { width: 3, height: 3, top: "55%", right: "25%" },
+  p3: { width: 4, height: 4, bottom: "20%", left: "50%" },
+});
+
+// ==========================================================================
 // COMPONENTE PRINCIPAL
 // ==========================================================================
 export default function App() {
@@ -489,25 +759,29 @@ export default function App() {
             />
           </View>
 
-        ) : lyrics.length > 0 && currentTrackIndex !== null ? (
-          /* LETRAS KARAOKE SINCRONIZADAS */
-          <FlatList
-            ref={lyricsListRef}
-            data={lyrics}
-            keyExtractor={(_, i) => i.toString()}
-            showsVerticalScrollIndicator={false}
-            getItemLayout={(_, i) => ({ length: 52, offset: 52 * i, index: i })}
-            renderItem={({ item, index }) => {
-              const isActive = index === activeLyricIndex;
-              return (
-                <View style={styles.lyricRow}>
-                  <Text style={[styles.lyricText, isActive && styles.lyricTextActive]}>
-                    {item.text}
-                  </Text>
-                </View>
-              );
-            }}
-          />
+        ) : currentTrackIndex !== null && !activeTrack?.isVideo ? (
+          /* ESFERA DE PLASMA + LETRAS KARAOKE PARA AUDIO MP3 */
+          <View style={{ flex: 1 }}>
+            <PlasmaOrb isPlaying={isPlaying} />
+            <FlatList
+              ref={lyricsListRef}
+              data={lyrics}
+              keyExtractor={(_, i) => i.toString()}
+              showsVerticalScrollIndicator={false}
+              getItemLayout={(_, i) => ({ length: 44, offset: 44 * i, index: i })}
+              style={{ flex: 1 }}
+              renderItem={({ item, index }) => {
+                const isActive = index === activeLyricIndex;
+                return (
+                  <View style={[styles.lyricRow, { height: 44 }]}>
+                    <Text style={[styles.lyricText, isActive && styles.lyricTextActive]}>
+                      {item.text}
+                    </Text>
+                  </View>
+                );
+              }}
+            />
+          </View>
 
         ) : (
           /* LISTA DE CANCIONES PARA EXPLORAR */
