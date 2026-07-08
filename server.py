@@ -415,6 +415,7 @@ def run_ytdl_motor(url, format_spec, output_template, post_args, save_path, down
         'quiet': True,
         'no_warnings': True,
         'concurrent_fragment_downloads': 16,
+        'remote_components': {'ejs:github'},
     }
     apply_cookies_opt(ydl_opts)
     apply_ipv6_opt(ydl_opts, url)
@@ -617,6 +618,7 @@ def get_video_info(url):
                 'no_warnings': False,
                 'verbose': True,
                 'format': 'all',
+                'remote_components': {'ejs:github'},
             }
             apply_cookies_opt(ydl_opts)
             apply_ipv6_opt(ydl_opts, url)
