@@ -80,6 +80,9 @@ export default function App() {
   const [activeLyricIndex, setActiveLyricIndex] = useState<number>(-1);
   const [isDownloading, setIsDownloading] = useState<boolean>(false);
   const [downloadProgress, setDownloadProgress] = useState<string>("0%");
+  
+  // Ancho dinámico de la barra de progreso para Adelantar/Retroceder
+  const [progressBarWidth, setProgressBarWidth] = useState<number>(200);
 
   // Referencias de Componentes
   const soundRef = useRef<Audio.Sound | null>(null);
@@ -95,7 +98,6 @@ export default function App() {
   useEffect(() => {
     const fetchVpsTracks = async () => {
       try {
-        // Enlace mock / real al server.py. Puedes añadir canciones aquí.
         const mockTracks: Track[] = [
           {
             id: "v1",
@@ -252,7 +254,7 @@ export default function App() {
         }
         lrcContent = await FileSystem.readAsStringAsync(localLrcUri);
       } catch {
-        lrcContent = `[00:00.00] Inicia reproducción...\n[00:08.00] Escuchando: ${track.title}\n[00:20.00] Zarate Player v1.0.0 - El Sonido del Futuro.`;
+        lrcContent = `[00:00.00] Inicia reproducción...\n[00:08.00] Escuchando: ${track.title}\n[00:20.00] Zarate Player v2.0 - El Sonido del Futuro.`;
       }
       setLyrics(parseLrc(lrcContent));
     } else {
@@ -308,7 +310,7 @@ export default function App() {
         };
 
         setLocalTracks((prev) => [...prev, newTrack]);
-        alert(`¡Archivo "${asset.name}" vinculado al explorador local con éxito!`);
+        alert(`¡Archivo "${asset.name}" vinculado con éxito!`);
       }
     } catch (err) {
       console.error("Error al abrir explorador de archivos:", err);
@@ -363,6 +365,62 @@ export default function App() {
     }
   };
 
+  // Adelantar o Retroceder tocando en la barra de progreso (Scrubbing interactivo)
+  const handleProgressBarPress = async (event: any) => {
+    if (playbackDuration === 0) return;
+    const { locationX } = event.nativeEvent;
+    
+    // Calcular porcentaje de pulsación sobre el ancho medido de la barra
+    const percent = Math.max(0, Math.min(1, locationX / progressBarWidth));
+    const newPosition = percent * playbackDuration;
+    
+    try {
+      if (activeTrack?.isVideo && videoRef.current) {
+        await videoRef.current.setPositionAsync(newPosition);
+      } else if (soundRef.current) {
+        await soundRef.current.setPositionAsync(newPosition);
+      }
+      setPlaybackPosition(newPosition);
+    } catch (err) {
+      console.error("Error al adelantar posición:", err);
+    }
+  };
+
+  const handleProgressBarLayout = (event: any) => {
+    const { width } = event.nativeEvent.layout;
+    setProgressBarWidth(width);
+  };
+
+  // Adelantar +10 segundos
+  const handleSkipForward = async () => {
+    const newPosition = Math.min(playbackDuration, playbackPosition + 10000);
+    try {
+      if (activeTrack?.isVideo && videoRef.current) {
+        await videoRef.current.setPositionAsync(newPosition);
+      } else if (soundRef.current) {
+        await soundRef.current.setPositionAsync(newPosition);
+      }
+      setPlaybackPosition(newPosition);
+    } catch (err) {
+      console.error("Error skip forward:", err);
+    }
+  };
+
+  // Retroceder -10 segundos
+  const handleSkipBackward = async () => {
+    const newPosition = Math.max(0, playbackPosition - 10000);
+    try {
+      if (activeTrack?.isVideo && videoRef.current) {
+        await videoRef.current.setPositionAsync(newPosition);
+      } else if (soundRef.current) {
+        await soundRef.current.setPositionAsync(newPosition);
+      }
+      setPlaybackPosition(newPosition);
+    } catch (err) {
+      console.error("Error skip backward:", err);
+    }
+  };
+
   const playlist = currentSource === "nube" ? vpsTracks : localTracks;
   const activeTrack = currentTrackIndex !== null ? playlist[currentTrackIndex] : null;
 
@@ -414,7 +472,7 @@ export default function App() {
             <Text style={styles.progressText}>{downloadProgress}</Text>
           </View>
         ) : activeTrack && activeTrack.isVideo && currentSource === activeTab ? (
-          /* PANTALLA DE VIDEO (.MP4) CON BORDES DE NEÓN GLOWING */
+          /* PANTALLA DE VIDEO (.MP4) CON ASPECT RATIO 16:9 RESPONSIVE */
           <View style={styles.videoWrapper}>
             <Video
               ref={videoRef}
@@ -515,7 +573,7 @@ export default function App() {
 
       {/* INFORMACIÓN DEL TRACK ACTIVO */}
       <View style={styles.trackInfoContainer}>
-        <Text style={styles.trackTitle}>
+        <Text style={styles.trackTitle} numberOfLines={1} ellipsizeMode="tail">
           {activeTrack ? activeTrack.title : "Ninguna pista activa"}
         </Text>
         <Text style={styles.trackArtist}>
@@ -523,36 +581,69 @@ export default function App() {
         </Text>
       </View>
 
-      {/* BARRA DE PROGRESO DE REPRODUCCIÓN (SCRUB BAR ESTILO IOS) */}
+      {/* BARRA DE PROGRESO INTERACTIVA DE REPRODUCCIÓN (TAP TO SEEK / ADELANTAR) */}
       <View style={styles.progressContainer}>
         <Text style={styles.progressTimeText}>{formatTime(playbackPosition)}</Text>
-        <View style={styles.progressBarBg}>
-          <View
-            style={[
-              styles.progressBarFill,
-              {
-                width: `${
-                  playbackDuration > 0
-                    ? (playbackPosition / playbackDuration) * 100
-                    : 0
-                }%`
-              }
-            ]}
-          />
-        </View>
+        
+        {/* Envoltura táctil para adelantar al hacer clic en cualquier parte de la barra */}
+        <TouchableOpacity
+          activeOpacity={1}
+          style={styles.progressBarTouchArea}
+          onPress={handleProgressBarPress}
+          onLayout={handleProgressBarLayout}
+        >
+          <View style={styles.progressBarBg}>
+            <View
+              style={[
+                styles.progressBarFill,
+                {
+                  width: `${
+                    playbackDuration > 0
+                      ? (playbackPosition / playbackDuration) * 100
+                      : 0
+                  }%`
+                }
+              ]}
+            />
+            {/* Cabezal deslizante estilo iOS */}
+            <View
+              style={[
+                styles.progressBarHandle,
+                {
+                  left: `${
+                    playbackDuration > 0
+                      ? (playbackPosition / playbackDuration) * 100
+                      : 0
+                  }%`
+                }
+              ]}
+            />
+          </View>
+        </TouchableOpacity>
+
         <Text style={styles.progressTimeText}>{formatTime(playbackDuration)}</Text>
       </View>
 
-      {/* CONTROLES MULTIMEDIA CIRCULARES DE CRISTAL (IOS + NEÓN) */}
+      {/* CONTROLES MULTIMEDIA CIRCULARES (IOS + NEÓN) CON ACCIÓN DE ADELANTAR +-10s */}
       <View style={styles.controlsContainer}>
+        <TouchableOpacity style={styles.controlButtonSmall} onPress={handleSkipBackward} title="Retroceder 10s">
+          <Text style={styles.controlIconSmall}>-10s</Text>
+        </TouchableOpacity>
+
         <TouchableOpacity style={styles.controlButton} onPress={handlePrevTrack}>
           <Text style={styles.controlIcon}>◀◀</Text>
         </TouchableOpacity>
+
         <TouchableOpacity style={[styles.controlButton, styles.playButton]} onPress={handlePlayPause}>
           <Text style={styles.playIcon}>{isPlaying ? "❚❚" : "▶"}</Text>
         </TouchableOpacity>
+
         <TouchableOpacity style={styles.controlButton} onPress={handleNextTrack}>
           <Text style={styles.controlIcon}>▶▶</Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity style={styles.controlButtonSmall} onPress={handleSkipForward} title="Adelantar 10s">
+          <Text style={styles.controlIconSmall}>+10s</Text>
         </TouchableOpacity>
       </View>
 
@@ -575,25 +666,25 @@ export default function App() {
 }
 
 // ==========================================================================
-// ESTILOS DE LA INTERFAZ FUSION DE CRISTAL DE IOS & NEÓN CYBERPUNK
+// ESTILOS DE LA INTERFAZ FUSION DE CRISTAL DE IOS & NEÓN CYBERPUNK (RESPONSIVE)
 // ==========================================================================
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "#070810",
-    paddingHorizontal: 20,
+    paddingHorizontal: 16,
     justifyContent: "space-between"
   },
   header: {
     flexDirection: "row",
     justifyContent: "center",
     alignItems: "center",
-    paddingVertical: 12,
+    paddingVertical: 10,
     borderBottomWidth: 1,
     borderBottomColor: "rgba(0, 240, 255, 0.08)"
   },
   logoAccent: {
-    fontSize: 18,
+    fontSize: 16,
     fontWeight: "bold",
     color: "#00f0ff",
     textShadowColor: "rgba(0, 240, 255, 0.6)",
@@ -601,21 +692,21 @@ const styles = StyleSheet.create({
     textShadowRadius: 8
   },
   logoText: {
-    fontSize: 20,
+    fontSize: 18,
     fontWeight: "900",
     letterSpacing: 3,
     color: "#ffffff",
-    marginHorizontal: 10,
+    marginHorizontal: 8,
     textShadowColor: "rgba(0, 240, 255, 0.3)",
     textShadowOffset: { width: 0, height: 0 },
     textShadowRadius: 10
   },
   tabContainer: {
     flexDirection: "row",
-    backgroundColor: "rgba(13, 14, 25, 0.7)",
+    backgroundColor: "rgba(13, 14, 25, 0.75)",
     borderRadius: 12,
-    padding: 4,
-    marginVertical: 10,
+    padding: 3,
+    marginVertical: 8,
     borderWidth: 1,
     borderColor: "rgba(255, 255, 255, 0.04)"
   },
@@ -631,7 +722,7 @@ const styles = StyleSheet.create({
     borderColor: "rgba(255, 0, 127, 0.3)"
   },
   tabButtonText: {
-    fontSize: 12,
+    fontSize: 11,
     fontWeight: "800",
     color: "#88899a",
     fontFamily: "monospace"
@@ -644,23 +735,23 @@ const styles = StyleSheet.create({
   },
   contentContainer: {
     flex: 1,
-    marginVertical: 15,
+    marginVertical: 10,
     justifyContent: "center"
   },
   lyricRow: {
     height: 50,
     justifyContent: "center",
     alignItems: "center",
-    paddingHorizontal: 10
+    paddingHorizontal: 8
   },
   lyricText: {
-    fontSize: 15,
+    fontSize: 14,
     color: "#464858",
     textAlign: "center",
     fontWeight: "600"
   },
   lyricTextActive: {
-    fontSize: 20,
+    fontSize: 18,
     color: "#00f0ff",
     fontWeight: "900",
     textShadowColor: "rgba(0, 240, 255, 0.8)",
@@ -692,9 +783,9 @@ const styles = StyleSheet.create({
   emptyText: {
     color: "#56586e",
     textAlign: "center",
-    fontSize: 14,
+    fontSize: 13,
     fontStyle: "italic",
-    marginBottom: 10
+    marginBottom: 8
   },
   emptySubText: {
     color: "#3a3b4c",
@@ -703,14 +794,14 @@ const styles = StyleSheet.create({
   },
   vpsList: {
     width: "100%",
-    marginTop: 15
+    marginTop: 10
   },
   trackListItem: {
     flexDirection: "row",
     backgroundColor: "rgba(18, 20, 36, 0.5)",
-    padding: 12,
+    padding: 10,
     borderRadius: 10,
-    marginBottom: 8,
+    marginBottom: 6,
     alignItems: "center",
     borderWidth: 1,
     borderColor: "rgba(255, 255, 255, 0.03)"
@@ -721,18 +812,18 @@ const styles = StyleSheet.create({
   },
   trackListNum: {
     color: "#00f0ff",
-    fontSize: 14,
+    fontSize: 13,
     fontWeight: "bold",
     width: 25,
     textAlign: "center"
   },
   trackListText: {
     flex: 1,
-    marginLeft: 10
+    marginLeft: 8
   },
   trackListName: {
     color: "#ffffff",
-    fontSize: 14,
+    fontSize: 13,
     fontWeight: "700"
   },
   trackListNameActive: {
@@ -740,12 +831,12 @@ const styles = StyleSheet.create({
   },
   trackListSub: {
     color: "#888",
-    fontSize: 11,
-    marginTop: 2
+    fontSize: 10,
+    marginTop: 1
   },
   trackPlayIcon: {
     color: "#ff007f",
-    fontSize: 14,
+    fontSize: 13,
     fontWeight: "bold"
   },
   localExplorerContainer: {
@@ -756,9 +847,9 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: "rgba(0, 240, 255, 0.3)",
     borderRadius: 10,
-    paddingVertical: 14,
+    paddingVertical: 12,
     alignItems: "center",
-    marginBottom: 15,
+    marginBottom: 12,
     shadowColor: "#00f0ff",
     shadowOffset: { width: 0, height: 0 },
     shadowOpacity: 0.1,
@@ -767,15 +858,16 @@ const styles = StyleSheet.create({
   importButtonText: {
     color: "#00f0ff",
     fontWeight: "bold",
-    fontSize: 12,
+    fontSize: 11,
     fontFamily: "monospace",
     letterSpacing: 0.5
   },
   videoWrapper: {
     width: "100%",
-    height: 240,
+    aspectRatio: 16 / 9,
+    maxHeight: 320,
     backgroundColor: "#000",
-    borderRadius: 15,
+    borderRadius: 12,
     overflow: "hidden",
     borderWidth: 2,
     borderColor: "#ff007f",
@@ -783,7 +875,8 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 0 },
     shadowOpacity: 0.5,
     shadowRadius: 15,
-    elevation: 8
+    elevation: 8,
+    alignSelf: "center"
   },
   videoPlayer: {
     width: "100%",
@@ -791,17 +884,18 @@ const styles = StyleSheet.create({
   },
   trackInfoContainer: {
     alignItems: "center",
-    marginBottom: 10
+    marginBottom: 5,
+    paddingHorizontal: 20
   },
   trackTitle: {
-    fontSize: 18,
+    fontSize: 16,
     fontWeight: "bold",
     color: "#ffffff",
     textAlign: "center",
     marginBottom: 4
   },
   trackArtist: {
-    fontSize: 13,
+    fontSize: 12,
     color: "#ff007f",
     fontWeight: "600",
     textShadowColor: "rgba(255, 0, 127, 0.4)",
@@ -812,22 +906,25 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
-    marginVertical: 15
+    marginVertical: 10
   },
   progressTimeText: {
     color: "#888",
-    fontSize: 11,
-    width: 35,
+    fontSize: 10,
+    width: 32,
     textAlign: "center",
     fontFamily: "monospace"
   },
-  progressBarBg: {
+  progressBarTouchArea: {
     flex: 1,
+    paddingVertical: 10, // Mayor área táctil para facilitar pulsación en móviles
+    marginHorizontal: 5
+  },
+  progressBarBg: {
     height: 5,
     backgroundColor: "rgba(255, 255, 255, 0.05)",
     borderRadius: 3,
-    marginHorizontal: 10,
-    overflow: "hidden"
+    position: "relative"
   },
   progressBarFill: {
     height: "100%",
@@ -838,17 +935,33 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.8,
     shadowRadius: 5
   },
+  progressBarHandle: {
+    position: "absolute",
+    top: -3,
+    width: 11,
+    height: 11,
+    borderRadius: 6,
+    backgroundColor: "#ffffff",
+    borderWidth: 1.5,
+    borderColor: "#00f0ff",
+    marginLeft: -5,
+    shadowColor: "#00f0ff",
+    shadowOffset: { width: 0, height: 0 },
+    shadowOpacity: 0.8,
+    shadowRadius: 4,
+    elevation: 2
+  },
   controlsContainer: {
     flexDirection: "row",
     justifyContent: "center",
     alignItems: "center",
-    marginBottom: 20,
-    gap: 30
+    marginBottom: 15,
+    gap: 15
   },
   controlButton: {
-    width: 58,
-    height: 58,
-    borderRadius: 29,
+    width: 54,
+    height: 54,
+    borderRadius: 27,
     backgroundColor: "rgba(17, 19, 36, 0.8)",
     borderWidth: 1.5,
     borderColor: "rgba(0, 240, 255, 0.18)",
@@ -860,10 +973,25 @@ const styles = StyleSheet.create({
     shadowRadius: 8,
     elevation: 4
   },
+  controlButtonSmall: {
+    width: 42,
+    height: 42,
+    borderRadius: 21,
+    backgroundColor: "rgba(17, 19, 36, 0.6)",
+    borderWidth: 1,
+    borderColor: "rgba(255, 0, 127, 0.15)",
+    justifyContent: "center",
+    alignItems: "center",
+    shadowColor: "#ff007f",
+    shadowOffset: { width: 0, height: 0 },
+    shadowOpacity: 0.15,
+    shadowRadius: 5,
+    elevation: 2
+  },
   playButton: {
-    width: 72,
-    height: 72,
-    borderRadius: 36,
+    width: 66,
+    height: 66,
+    borderRadius: 33,
     borderColor: "#ff007f",
     shadowColor: "#ff007f",
     shadowOpacity: 0.45,
@@ -871,12 +999,18 @@ const styles = StyleSheet.create({
   },
   controlIcon: {
     color: "#00f0ff",
-    fontSize: 15,
+    fontSize: 14,
     fontWeight: "bold"
+  },
+  controlIconSmall: {
+    color: "#ff007f",
+    fontSize: 10,
+    fontWeight: "bold",
+    fontFamily: "monospace"
   },
   playIcon: {
     color: "#ff007f",
-    fontSize: 22,
+    fontSize: 20,
     fontWeight: "bold",
     marginLeft: 3
   },
@@ -884,12 +1018,12 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "center",
     alignItems: "flex-end",
-    height: 50,
-    marginBottom: 10,
-    gap: 6
+    height: 40,
+    marginBottom: 5,
+    gap: 5
   },
   visualizerBar: {
-    width: 4,
+    width: 3.5,
     backgroundColor: "#ff007f",
     borderRadius: 2,
     shadowColor: "#ff007f",
