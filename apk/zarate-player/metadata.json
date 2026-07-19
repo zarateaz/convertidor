@@ -1,0 +1,6 @@
+{
+  "name": "Zarate Player",
+  "description": "Premium industrial cyberpunk music player inspired by the luxury design of a subterranean wine cellar.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
