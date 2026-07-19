@@ -176,7 +176,7 @@ export function PlayerProvider({ children }: { children: React.ReactNode }) {
       setLyrics([
         { timeMs: 0, text: `♫ ${track.title}` },
         { timeMs: 3000, text: track.artist },
-        { timeMs: 8000, text: '— NEXUS PLAYER —' },
+        { timeMs: 8000, text: '— ZARATE PLAYER —' },
       ]);
     }
     setActiveLyricIndex(-1);

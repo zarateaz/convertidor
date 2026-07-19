@@ -1,5 +1,5 @@
 /**
- * NEXUS PLAYER — Root Entry Point
+ * ZARATE PLAYER — Root Entry Point
  * Wraps the app in an Error Boundary + PlayerProvider.
  * Any unhandled exception is caught and shows a recovery screen
  * instead of crashing the APK.
@@ -37,7 +37,7 @@ class ErrorBoundary extends Component<
   }
 
   componentDidCatch(error: Error, info: ErrorInfo) {
-    console.error('[NEXUS ERROR BOUNDARY]', error, info);
+    console.error('[ZARATE ERROR BOUNDARY]', error, info);
   }
 
   reset = () => this.setState({ hasError: false, message: '' });
@@ -47,7 +47,7 @@ class ErrorBoundary extends Component<
       return (
         <View style={eb.container}>
           <Text style={eb.icon}>⚠</Text>
-          <Text style={eb.title}>NEXUS PLAYER — SYSTEM FAULT</Text>
+          <Text style={eb.title}>ZARATE PLAYER — SYSTEM FAULT</Text>
           <Text style={eb.message}>{this.state.message}</Text>
           <TouchableOpacity style={eb.btn} onPress={this.reset}>
             <Text style={eb.btnText}>REINICIAR MÓDULO</Text>
@@ -108,7 +108,7 @@ function SplashScreen() {
   return (
     <View style={splash.container}>
       <ActivityIndicator size="large" color="#00f0ff" />
-      <Text style={splash.title}>NEXUS PLAYER</Text>
+      <Text style={splash.title}>ZARATE PLAYER</Text>
       <Text style={splash.sub}>INICIALIZANDO MÓDULOS...</Text>
     </View>
   );

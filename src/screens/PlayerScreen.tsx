@@ -72,7 +72,7 @@ export default function PlayerScreen() {
       {/* ═══ HEADER ════════════════════════════════════════════════════════ */}
       <View style={styles.header}>
         <Text style={styles.logoAccent}>&lt;</Text>
-        <Text style={styles.logoText}>NEXUS PLAYER</Text>
+        <Text style={styles.logoText}>ZARATE PLAYER</Text>
         <Text style={styles.logoAccent}>/&gt;</Text>
       </View>
 
@@ -97,7 +97,7 @@ export default function PlayerScreen() {
           /* Loading State */
           <View style={styles.loadingBox}>
             <ActivityIndicator size="large" color="#00f0ff" />
-            <Text style={styles.loadingText}>SINCRONIZANDO CON NEXUS...</Text>
+            <Text style={styles.loadingText}>SINCRONIZANDO CON ZARATE...</Text>
           </View>
 
         ) : isVideo ? (

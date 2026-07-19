@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "NEXUS PLAYER",
-    "slug": "nexus-player",
+    "name": "ZARATE PLAYER",
+    "slug": "zarate-player",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -14,12 +14,12 @@
       "supportsTablet": false,
       "infoPlist": {
         "UIBackgroundModes": ["audio"],
-        "NSMicrophoneUsageDescription": "NEXUS PLAYER no usa el micrófono.",
-        "NSAppleMusicUsageDescription": "NEXUS PLAYER necesita acceso a tu biblioteca de música."
+        "NSMicrophoneUsageDescription": "ZARATE PLAYER no usa el micrófono.",
+        "NSAppleMusicUsageDescription": "ZARATE PLAYER necesita acceso a tu biblioteca de música."
       }
     },
     "android": {
-      "package": "com.zarateaz.nexusplayer",
+      "package": "com.zarateaz.zarateplayer",
       "versionCode": 1,
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
@@ -40,7 +40,7 @@
       [
         "expo-av",
         {
-          "microphonePermission": "NEXUS PLAYER no requiere micrófono."
+          "microphonePermission": "ZARATE PLAYER no requiere micrófono."
         }
       ],
       "expo-document-picker"
