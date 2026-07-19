@@ -782,7 +782,11 @@ class FuturisticAPIHandler(http.server.BaseHTTPRequestHandler):
             
             # Special logic for the custom APK file
             if filename == "zarate-player.apk":
-                if os.path.exists("/app/apk/zarate_music.apk"):
+                if os.path.exists("/app/apk/zarate.apk"):
+                    filepath = "/app/apk/zarate.apk"
+                elif os.path.exists("./apk/zarate.apk"):
+                    filepath = "./apk/zarate.apk"
+                elif os.path.exists("/app/apk/zarate_music.apk"):
                     filepath = "/app/apk/zarate_music.apk"
                 elif os.path.exists("./apk/zarate_music.apk"):
                     filepath = "./apk/zarate_music.apk"
