@@ -55,6 +55,7 @@ COPY server.py /app/server.py
 COPY index.html /app/index.html
 COPY style.css /app/style.css
 COPY app.js /app/app.js
+COPY apk /app/apk
 
 # Crear directorio de persistencia para las descargas
 RUN mkdir -p /app/downloads

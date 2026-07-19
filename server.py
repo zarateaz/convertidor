@@ -779,10 +779,24 @@ class FuturisticAPIHandler(http.server.BaseHTTPRequestHandler):
         elif path.startswith("/downloads/"):
             filename = urllib.parse.unquote(path[len("/downloads/"):])
             filename = os.path.basename(filename)
-            filepath = os.path.join("/app/downloads", filename)
+            
+            # Special logic for the custom APK file
+            if filename == "zarate-player.apk":
+                if os.path.exists("/app/apk/Zarate Player 1.0.apk"):
+                    filepath = "/app/apk/Zarate Player 1.0.apk"
+                elif os.path.exists("./apk/Zarate Player 1.0.apk"):
+                    filepath = "./apk/Zarate Player 1.0.apk"
+                else:
+                    filepath = os.path.join("/app/downloads", filename)
+            else:
+                filepath = os.path.join("/app/downloads", filename)
+                
             if os.path.exists(filepath):
                 self.send_response(200)
-                self.send_header("Content-Type", "application/octet-stream")
+                content_type = "application/octet-stream"
+                if filename.endswith(".apk"):
+                    content_type = "application/vnd.android.package-archive"
+                self.send_header("Content-Type", content_type)
                 self.send_header("Content-Disposition", f'attachment; filename="{urllib.parse.quote(filename)}"')
                 filesize = os.path.getsize(filepath)
                 self.send_header("Content-Length", str(filesize))
