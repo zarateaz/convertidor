@@ -780,32 +780,11 @@ class FuturisticAPIHandler(http.server.BaseHTTPRequestHandler):
             filename = urllib.parse.unquote(path[len("/downloads/"):])
             filename = os.path.basename(filename)
             
-            # Special logic for the custom APK file
             if filename == "zarate-player.apk":
-                if os.path.exists("/app/apk/zaratez.apk"):
-                    filepath = "/app/apk/zaratez.apk"
-                elif os.path.exists("./apk/zaratez.apk"):
-                    filepath = "./apk/zaratez.apk"
-                elif os.path.exists("/app/apk/zarate.apk"):
+                if os.path.exists("/app/apk/zarate.apk"):
                     filepath = "/app/apk/zarate.apk"
                 elif os.path.exists("./apk/zarate.apk"):
                     filepath = "./apk/zarate.apk"
-                elif os.path.exists("/app/apk/zarate_music.apk"):
-                    filepath = "/app/apk/zarate_music.apk"
-                elif os.path.exists("./apk/zarate_music.apk"):
-                    filepath = "./apk/zarate_music.apk"
-                elif os.path.exists("/app/apk/Zarate_Player_Final.apk"):
-                    filepath = "/app/apk/Zarate_Player_Final.apk"
-                elif os.path.exists("./apk/Zarate_Player_Final.apk"):
-                    filepath = "./apk/Zarate_Player_Final.apk"
-                elif os.path.exists("/app/apk/Zarate_Player.apk"):
-                    filepath = "/app/apk/Zarate_Player.apk"
-                elif os.path.exists("./apk/Zarate_Player.apk"):
-                    filepath = "./apk/Zarate_Player.apk"
-                elif os.path.exists("/app/apk/Zarate Player 1.0.apk"):
-                    filepath = "/app/apk/Zarate Player 1.0.apk"
-                elif os.path.exists("./apk/Zarate Player 1.0.apk"):
-                    filepath = "./apk/Zarate Player 1.0.apk"
                 else:
                     filepath = os.path.join("/app/downloads", filename)
             else:
