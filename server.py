@@ -781,10 +781,10 @@ class FuturisticAPIHandler(http.server.BaseHTTPRequestHandler):
             filename = os.path.basename(filename)
             
             if filename == "zarate-player.apk":
-                if os.path.exists("/app/apk/zarate.apk"):
-                    filepath = "/app/apk/zarate.apk"
-                elif os.path.exists("./apk/zarate.apk"):
-                    filepath = "./apk/zarate.apk"
+                if os.path.exists("/app/apk/Zarate_Player_Release_v2.apk"):
+                    filepath = "/app/apk/Zarate_Player_Release_v2.apk"
+                elif os.path.exists("./apk/Zarate_Player_Release_v2.apk"):
+                    filepath = "./apk/Zarate_Player_Release_v2.apk"
                 else:
                     filepath = os.path.join("/app/downloads", filename)
             else:
